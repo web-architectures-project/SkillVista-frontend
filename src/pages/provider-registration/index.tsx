@@ -55,7 +55,9 @@ const index: FC<indexProps> = ({}) => {
         id="forms-wrapper"
         className="p-5 border-2 border-black rounded-lg 2xl:w-fit "
       >
-        <h1 className="text-3xl text-center font-bold">User Registration</h1>
+        <h1 className="text-3xl text-center font-bold">
+          Provider Registration
+        </h1>
         <form onSubmit={formik?.handleSubmit}>
           {/* Create a grid layout with two columns and gap between them */}
           <div className="grid grid-cols-2 gap-5 aspect-auto">

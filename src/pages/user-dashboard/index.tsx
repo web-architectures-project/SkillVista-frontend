@@ -8,7 +8,8 @@ const index: FC<indexProps> = ({}) => {
   const router = useRouter();
   const authContext = useContext(AuthContext);
   useEffect(() => {
-    authContext?.isUserAuthenticated ? router.push('/')
+    console.log("working");
+    !authContext?.isUserAuthenticated && router.push("/login");
   }, []);
   return <div>User Dashboard</div>;
 };
