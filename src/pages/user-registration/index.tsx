@@ -8,11 +8,11 @@ import { FC } from "react"; // Importing FC (Functional Component) type from Rea
 import * as Yup from "yup"; // Import Yup for form validation
 
 // Define the props interface for the 'index' component
-interface indexProps {}
+interface IndexProps {}
 
 // Define the 'index' component as a functional component
-const index: FC<indexProps> = ({}) => {
-  const router = useRouter();
+const Index: FC<IndexProps> = ({}) => {
+  const Router = useRouter();
   const approved = true;
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
@@ -42,7 +42,7 @@ const index: FC<indexProps> = ({}) => {
     onSubmit: () => {
       if (approved) {
         console.log(formik.values);
-        router.push("/user-dashboard");
+        Router.push("/user-dashboard");
       }
     },
   });
@@ -137,4 +137,4 @@ const index: FC<indexProps> = ({}) => {
   );
 };
 
-export default index; // Export the 'index' component as the default export
+export default Index; // Export the 'index' component as the default export
