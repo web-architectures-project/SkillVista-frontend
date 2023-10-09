@@ -49,6 +49,6 @@ jobs:
       - name: Cleanup old packages
         uses: actions/delete-package-versions@v4
         with: 
-          package-name: 'skillvista-backend'
+          package-name: 'skillvista-frontend'
           package-type: 'container'
           min-versions-to-keep: 1
