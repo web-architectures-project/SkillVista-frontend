@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface indexProps {}
 
@@ -11,11 +12,11 @@ const index: FC<indexProps> = ({}) => {
         <p className="text-center font-bold text-3xl mb-8">Welcome back</p>
         <div className="bg-white p-8">
           <div className="pb-3">
-            <p className="text-base text-bold mb-2">Eamil</p>
+            <Label>Email</Label>
             <Input type="Email" name="Email" placeholder="Email" />
           </div>
           <div className="pb-3">
-            <p className="text-base text-bold mb-2">Password</p>
+            <Label>Password</Label>
             <Input type="text" name="Password" placeholder="Password" />
           </div>
           <div className="flex flex-col mt-5">
