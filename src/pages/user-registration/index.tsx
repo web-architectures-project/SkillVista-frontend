@@ -1,10 +1,11 @@
 // Import necessary components and libraries
+import Signup from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input' // Importing the Input component
 import { Label } from '@/components/ui/label' // Importing the Label component
 import { useFormik } from 'formik' // Importing useFormik hook for form handling
 import { useRouter } from 'next/router'
-import { FC } from 'react' // Importing FC (Functional Component) type from React
+import { FC, useState } from 'react' // Importing FC (Functional Component) type from React
 import * as Yup from 'yup' // Import Yup for form validation
 
 // Define the props interface for the 'index' component
@@ -12,8 +13,8 @@ interface IndexProps {}
 
 // Define the 'index' component as a functional component
 const Index: FC<IndexProps> = ({}) => {
-  const Router = useRouter()
-  const approved = true
+  const router = useRouter()
+  const [error, setError] = useState<string>()
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
     username: Yup.string()
@@ -40,10 +41,15 @@ const Index: FC<IndexProps> = ({}) => {
     },
     validationSchema: RegistrationSchema, // Apply the Yup schema for validation
     onSubmit: () => {
-      if (approved) {
-        console.log(formik.values)
-        Router.push('/user-dashboard')
-      }
+      Signup(formik.values).then((res: any) => {
+        if (res === 'fail') {
+          setError('Please wait a few mintues and try agin')
+          return
+        }
+        if (res.statusCode) {
+          router.push('/user-dashboard')
+        }
+      })
     },
   })
 
@@ -139,6 +145,7 @@ const Index: FC<IndexProps> = ({}) => {
               <p className="text-sm text-slate-500 font-light">
                 * Your password: must be at least 6 characters long
               </p>
+              <p className="text-red-400">{error}</p>
             </div>
 
             <div className="flex flex-col mt-5">
