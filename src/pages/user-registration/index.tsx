@@ -1,57 +1,58 @@
 // Import necessary components and libraries
-import Signup from '@/components/apis/default'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input' // Importing the Input component
-import { Label } from '@/components/ui/label' // Importing the Label component
-import { useFormik } from 'formik' // Importing useFormik hook for form handling
-import { useRouter } from 'next/router'
-import { FC, useState } from 'react' // Importing FC (Functional Component) type from React
-import * as Yup from 'yup' // Import Yup for form validation
+import { Signup } from "@/components/apis/default";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Importing the Input component
+import { Label } from "@/components/ui/label"; // Importing the Label component
+import { useFormik } from "formik"; // Importing useFormik hook for form handling
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useState } from "react"; // Importing FC (Functional Component) type from React
+import * as Yup from "yup"; // Import Yup for form validation
 
 // Define the props interface for the 'index' component
 interface IndexProps {}
 
 // Define the 'index' component as a functional component
 const Index: FC<IndexProps> = ({}) => {
-  const router = useRouter()
-  const [error, setError] = useState<string>()
+  const router = useRouter();
+  const [error, setError] = useState<string>();
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
     username: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Required'),
-    email: Yup.string().email('Invalid email').required('Required'),
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters long')
-      .required('Password is required'),
+      .min(6, "Password must be at least 6 characters long")
+      .required("Password is required"),
     repassword: Yup.string().oneOf(
-      [Yup.ref('password')],
-      'Passwords dont match',
+      [Yup.ref("password")],
+      "Passwords dont match"
     ),
-  })
+  });
 
   // Initialize Formik for form management
   const formik = useFormik({
     initialValues: {
-      username: '', // Initial value for the 'username' field
-      email: '',
-      password: '',
-      repassword: '',
+      username: "", // Initial value for the 'username' field
+      email: "",
+      password: "",
+      repassword: "",
     },
     validationSchema: RegistrationSchema, // Apply the Yup schema for validation
     onSubmit: () => {
       Signup(formik.values).then((res: any) => {
-        if (res === 'fail') {
-          setError('Please wait a few mintues and try agin')
-          return
+        if (res === "fail") {
+          setError("Please wait a few mintues and try agin");
+          return;
         }
         if (res.statusCode) {
-          router.push('/user-dashboard')
+          router.push("/user-dashboard");
         }
-      })
+      });
     },
-  })
+  });
 
   return (
     <div className="bg-slate-100">
@@ -80,7 +81,7 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.username}
                   </p>
                 ) : (
-                  ''
+                  ""
                 )}
               </div>
               <div className="col-span-2">
@@ -99,7 +100,7 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.email}
                   </p>
                 ) : (
-                  ''
+                  ""
                 )}
               </div>
               <div>
@@ -118,7 +119,7 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.password}
                   </p>
                 ) : (
-                  ''
+                  ""
                 )}
               </div>
               <div>
@@ -137,7 +138,7 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.repassword}
                   </p>
                 ) : (
-                  ''
+                  ""
                 )}
               </div>
             </div>
@@ -155,15 +156,15 @@ const Index: FC<IndexProps> = ({}) => {
             </div>
           </form>
           <div className="mt-10 text-center">
-            <span className="font-lights">Already have an account?</span>{' '}
+            <span className="font-lights">Already have an account?</span>{" "}
             <span className="text-mainblue font-lights">
-              <a href="/user-login">Log in.</a>
+              <Link href={"/user-login"}>Log in</Link>
             </span>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Index // Export the 'index' component as the default export
+export default Index; // Export the 'index' component as the default export

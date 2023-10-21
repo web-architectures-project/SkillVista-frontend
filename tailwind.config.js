@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      container: {
+        center: true,
+      },
       colors: {
         mainblue: '#009fd9',
         border: 'hsl(var(--border))',
