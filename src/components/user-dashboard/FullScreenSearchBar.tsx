@@ -1,26 +1,27 @@
+// Import the necessary dependencies and components
 import { FC, useState, Dispatch } from "react";
 import { Input } from "../ui/input";
 
+// Define the interface for the FullScreenSearchBar component's props
 interface FullScreenSearchBarProps {
-  query: string;
-  setQuery: Dispatch<React.SetStateAction<string>>;
+  query: string; // The search query
+  setQuery: Dispatch<React.SetStateAction<string>>; // Function to update the search query
 }
 
+// Create a functional component named FullScreenSearchBar and provide the expected props
 const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
   query,
   setQuery,
 }) => {
-  const [enterPressed, setEnterPressed] = useState(false);
+  // Initialize state to manage the focus state
   const [isFocused, setIsFocused] = useState(false);
 
+  // Function to handle input changes and update the query and focus state
   const handleInputChange = (e: any) => {
-    setQuery(e.target.value);
-    setIsFocused(true);
+    setQuery(e.target.value); // Update the search query
+    setIsFocused(true); // Set focus state to true
   };
 
-  // const submitHandler = () => {
-  //   setEnterPressed(!enterPressed);
-  // };
   return (
     <>
       <div className="absolute inset-0 flex items-center justify-center -translate-y-24 w-full z-10">
@@ -33,7 +34,7 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
               type="text"
               placeholder="Search for the service here"
               value={query}
-              onChange={handleInputChange}
+              onChange={handleInputChange} // Attach the handleInputChange function to the input's onChange event
             />
           </form>
         </div>
@@ -42,4 +43,5 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
   );
 };
 
+// Export the FullScreenSearchBar component as the default export
 export default FullScreenSearchBar;

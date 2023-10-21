@@ -1,3 +1,4 @@
+// Import the necessary dependencies and components
 import {
   ColumnDef,
   flexRender,
@@ -14,21 +15,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+// Define the interface for the DataTable component's props
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  query: string;
+  columns: ColumnDef<TData, TValue>[]; // Column definitions
+  data: TData[]; // Data to display in the table
+  query: string; // Search query
 }
 
+// Define the DataTable component as a functional component
 export function DataTable<TData, TValue>({
   columns,
   data,
   query,
 }: DataTableProps<TData, TValue>) {
+  // Initialize a table instance using useReactTable
   const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+    data, // Data to display
+    columns, // Column definitions
+    getCoreRowModel: getCoreRowModel(), // Row model
   });
 
   return (
@@ -38,6 +42,7 @@ export function DataTable<TData, TValue>({
       } absolute inset-0 flex top-32 rounded-md w-full transition duration-1000`}
     >
       <Table>
+        {/* TableHeader section: Defines the table header with column headers */}
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -56,6 +61,7 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
+        {/* TableBody section: Displays table rows and data */}
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
@@ -71,6 +77,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))
           ) : (
+            /* Render a message when there are no results in the table */
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
