@@ -24,13 +24,19 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
 
   return (
     <>
-      <div className="absolute inset-0 flex items-center justify-center -translate-y-24 w-full z-10">
+      <div
+        className={`pt-10 w-full ${
+          query
+            ? "translate-y-0"
+            : "2xl:translate-y-[200%] xl:translate-y-[175%]"
+        } transition duration-700`}
+      >
         <div className={`w-full text-center`}>
           <form>
             <Input
-              className={` ${
-                query ? "-translate-y-72 py-8 text-xl" : "py-12 text-3xl"
-              } px-5  rounded-full  transition duration-500 transform-gpu hover:shadow-md`}
+              className={`px-5 ${
+                query ? "py-5 text-xl" : "py-10 text-3xl"
+              }  rounded-full transition duration-500 hover:shadow-md`}
               type="text"
               placeholder="Search for the service here"
               value={query}

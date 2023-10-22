@@ -38,8 +38,8 @@ export function DataTable<TData, TValue>({
   return (
     <div
       className={`${
-        query ? "opacity-100 z-20" : "opacity-0"
-      } absolute inset-0 flex top-32 rounded-md w-full transition duration-1000`}
+        query ? "visible " : "invisible "
+      } rounded-md w-full transition ease-linear duration-1000`}
     >
       <Table>
         {/* TableHeader section: Defines the table header with column headers */}

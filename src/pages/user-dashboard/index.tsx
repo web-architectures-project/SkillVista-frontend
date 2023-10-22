@@ -25,7 +25,7 @@ const Index: FC<IndexProps> = ({}) => {
     // Main container for the component
     <main className="container">
       <div className="relative h-screen">
-        <div>
+        <div className={``}>
           {/* Render the FullScreenSearchBar component and pass the query state and setQuery function as props */}
           <FullScreenSearchBar query={query} setQuery={setQuery} />
 
