@@ -1,58 +1,58 @@
-import { FC, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Signin } from "@/components/apis/default";
-import { useRouter } from "../../../node_modules/next/navigation";
-import { withSessionSsr } from "@/lib/withSession";
-import Link from "next/link";
+import { FC, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { Signin } from '@/components/apis/default'
+import { useRouter } from '../../../node_modules/next/navigation'
+import { withSessionSsr } from '@/lib/withSession'
+import Link from 'next/link'
 
 interface indexProps {}
 
-const Index: FC<indexProps> = ({}) => {
-  const router = useRouter();
-  const [error, setError] = useState<string>("");
+const Index: FC<indexProps> = () => {
+  const router = useRouter()
+  const [error, setError] = useState<string>('')
   const signinSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().required("Password is required"),
-  });
+    email: Yup.string().email('Invalid email').required('Required'),
+    password: Yup.string().required('Password is required'),
+  })
 
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
     validationSchema: signinSchema,
     onSubmit: async () => {
       Signin(formik.values).then((res: any) => {
-        if (res.token.statusCode === 200) {
+        if (res.token === 200) {
           setSession().then(() => {
-            router.push("/user-dashboard");
-          });
+            router.push('/user-dashboard')
+          })
         } else {
-          setError(res.token.message);
+          setError(res.token.message)
         }
-      });
+      })
     },
-  });
+  })
 
   const setSession = async () => {
     try {
       const options = {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formik.values),
-      };
-      const response = await fetch("/api/auth", options);
-      if (response.status !== 200) throw new Error("Can't login");
+      }
+      const response = await fetch('/api/auth', options)
+      if (response.status !== 200) throw new Error("Can't login")
     } catch (err) {
-      new Error(err);
+      new Error(err)
     }
-  };
+  }
 
   return (
     <div className="bg-slate-100">
@@ -82,7 +82,7 @@ const Index: FC<indexProps> = ({}) => {
                 className="form-input"
               />
             </div>
-            {error ? <p className="text-red-400">{error}</p> : ""}
+            {error ? <p className="text-red-400">{error}</p> : ''}
             <div className="flex flex-col mt-5">
               <Button type="submit" className="bg-mainblue hover:bg-slate-300">
                 Login
@@ -91,7 +91,7 @@ const Index: FC<indexProps> = ({}) => {
           </form>
           <div className="mt-10 text-center">
             {/* eslint-disable-next-line react/no-unescaped-entities */}
-            <span className="font-lights">Don't have an account?</span>{" "}
+            <span className="font-lights">Don't have an account?</span>{' '}
             <span className="text-mainblue font-lights">
               <Link href="/user-registration">Sign up.</Link>
             </span>
@@ -99,32 +99,31 @@ const Index: FC<indexProps> = ({}) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
 
 export const getServerSideProps = withSessionSsr(
   async function getServersideProps({ req, res }) {
     try {
-      const email = req.session.email || "";
-      const isLoggedIn = req.session.isLoggedIn || "";
-
+      const email = req.session.email || ''
+      const isLoggedIn = req.session.isLoggedIn || ''
       return {
         props: {
           email: email,
           isLoggedIn: isLoggedIn,
         },
-      };
+      }
     } catch (err) {
-      console.log(err);
+      console.log(err)
 
       return {
         redirect: {
-          destination: "/user-login",
+          destination: '/user-login',
           statusCode: 307,
         },
-      };
+      }
     }
-  }
-);
+  },
+)
