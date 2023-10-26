@@ -33,16 +33,16 @@ const Modal = ({
           </div>
           <div className="p-3  mt-2 text-center space-x-4 md:block">
             <button
-              onClick={rightFunc}
+              onClick={leftFunc}
               className="mb-2 md:mb-0 bg-mainblue borde px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-mainblue"
             >
-              {rightButton}
+              {leftButton}
             </button>
             <button
-              onClick={leftFunc}
+              onClick={rightFunc}
               className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100"
             >
-              {leftButton}
+              {rightButton}
             </button>
           </div>
         </div>
