@@ -1,6 +1,7 @@
 // Import the necessary dependencies and components
 import { FC, useState, Dispatch } from "react";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 // Define the interface for the FullScreenSearchBar component's props
 interface FullScreenSearchBarProps {
@@ -49,5 +50,4 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
   );
 };
 
-// Export the FullScreenSearchBar component as the default export
 export default FullScreenSearchBar;

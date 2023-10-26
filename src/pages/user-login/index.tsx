@@ -50,7 +50,9 @@ const Index: FC<indexProps> = ({}) => {
       const response = await fetch("/api/auth", options);
       if (response.status !== 200) throw new Error("Can't login");
     } catch (err) {
-      new Error(err);
+      console.error(err);
+
+      // new Error(err);
     }
   };
 
