@@ -1,11 +1,36 @@
 import Link from 'next/link'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { selectAuthState, setAuthState } from '@/store/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteCookie, getCookie } from 'cookies-next'
 
 const Header = () => {
   const [toggle, setToggle] = useState(false)
+  const dispatch = useDispatch()
+  const authState = useSelector(selectAuthState)
+
+  /** Detect cookie when user leave and come back to the website */
+  useEffect(() => {
+    const token = getCookie('cookie-token')
+    if (token) {
+      dispatch(setAuthState(true))
+    }
+  }, [])
 
   const handleToggle = () => {
     setToggle((toggle) => !toggle)
+  }
+  const handleLogout = () => {
+    dispatch(setAuthState(false))
+    deleteCookie('cookie-token')
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: null }),
+    }
+    fetch('/api/auth', options)
   }
 
   return (
@@ -43,15 +68,26 @@ const Header = () => {
           <Link href="/user-login" className=" inline-block  mr-4">
             Become a Provider
           </Link>
-          <Link href="/user-login" className=" inline-block  mr-4">
-            Login
-          </Link>
-          <Link
-            href="/user-registration"
-            className=" lg:inline-block mr-4 font-bold border border-mainblue rounded px-2 py-1"
-          >
-            Join
-          </Link>
+          {authState ? (
+            <div
+              onClick={() => handleLogout()}
+              className=" lg:inline-block mr-4 font-bold  px-2 py-1"
+            >
+              Logout
+            </div>
+          ) : (
+            <>
+              <Link href="/user-login" className=" inline-block  mr-4">
+                Login
+              </Link>
+              <Link
+                href="/user-registration"
+                className=" lg:inline-block mr-4 font-bold border border-mainblue rounded px-2 py-1"
+              >
+                Join
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -64,18 +100,29 @@ const Header = () => {
             >
               Become a Provider
             </Link>
-            <Link
-              href="/user-login"
-              className="block mt-4 lg:inline-block lg:mt-0 mr-4"
-            >
-              Login
-            </Link>
-            <Link
-              href="/user-registration"
-              className="block mt-4 lg:inline-block lg:mt-0 mr-4 "
-            >
-              Join
-            </Link>
+            {authState ? (
+              <Link
+                href="/user-registration"
+                className="block mt-4 lg:inline-block lg:mt-0 mr-4 "
+              >
+                Logout
+              </Link>
+            ) : (
+              <>
+                <div
+                  onClick={() => handleLogout()}
+                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                >
+                  Login
+                </div>
+                <Link
+                  href="/user-registration"
+                  className="block mt-4 lg:inline-block lg:mt-0 mr-4 "
+                >
+                  Join
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
