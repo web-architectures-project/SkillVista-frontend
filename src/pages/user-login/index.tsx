@@ -1,18 +1,27 @@
-import { FC, useState } from "react";
+import { FC, use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Signin } from "@/components/apis/default";
+import { apiRequest } from "@/components/apis/default";
 import { useRouter } from "../../../node_modules/next/navigation";
-import { withSessionSsr } from "@/lib/withSession";
 import Link from "next/link";
+import { getCookie, setCookie } from "cookies-next";
+import { useDispatch } from "react-redux";
+import { setAuthState } from "@/store/authSlice";
 
 interface indexProps {}
+interface handleTokenProps {
+  token: string;
+}
+interface handleSessionProps {
+  token: string;
+}
 
 const Index: FC<indexProps> = ({}) => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [error, setError] = useState<string>("");
   const signinSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
@@ -26,26 +35,48 @@ const Index: FC<indexProps> = ({}) => {
     },
     validationSchema: signinSchema,
     onSubmit: async () => {
-      Signin(formik.values).then((res: any) => {
-        if (res.token.statusCode === 200) {
-          setSession().then(() => {
-            router.push("/user-dashboard");
-          });
+      apiRequest({
+        method: "POST",
+        path: "users/login",
+        body: {
+          email: formik.values.email,
+          password: formik.values.password,
+        },
+      }).then((res) => {
+        if (res?.status === 200) {
+          handleToken({ token: res.message.accessToken });
         } else {
-          setError(res.token.message);
+          setError("User not found");
         }
       });
     },
   });
 
-  const setSession = async () => {
+  /** cookie consent
+   * True :  save in cookie & session
+   * False : save in session */
+  const handleToken = async ({ token }: handleTokenProps) => {
+    const consent = getCookie("cookie-consent");
+    if (consent) {
+      //4 hours
+      await setCookie("cookie-token", token, {
+        expires: new Date(Number(new Date()) + 14400000),
+      });
+    }
+    setSession({ token }).then(() => {
+      dispatch(setAuthState(true));
+      router.push("/user-dashboard");
+    });
+  };
+
+  const setSession = async ({ token }: handleSessionProps) => {
     try {
       const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formik.values),
+        body: JSON.stringify({ token: token }),
       };
       const response = await fetch("/api/auth", options);
       if (response.status !== 200) throw new Error("Can't login");
@@ -105,28 +136,3 @@ const Index: FC<indexProps> = ({}) => {
 };
 
 export default Index;
-
-export const getServerSideProps = withSessionSsr(
-  async function getServersideProps({ req, res }) {
-    try {
-      const email = req.session.email || "";
-      const isLoggedIn = req.session.isLoggedIn || "";
-
-      return {
-        props: {
-          email: email,
-          isLoggedIn: isLoggedIn,
-        },
-      };
-    } catch (err) {
-      console.log(err);
-
-      return {
-        redirect: {
-          destination: "/user-login",
-          statusCode: 307,
-        },
-      };
-    }
-  }
-);

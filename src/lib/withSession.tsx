@@ -7,12 +7,11 @@ import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next'
 
 declare module 'iron-session' {
   interface IronSessionData {
-    isLoggedIn: boolean
-    email: string
+    token: string
   }
 }
 
-const sessionOptions = {
+export const sessionOptions = {
   password: 'SkillvistaSkillvistaSkillvistaSkillvistaSkillvista',
   cookieName: 'Skillvista-cookie',
 }

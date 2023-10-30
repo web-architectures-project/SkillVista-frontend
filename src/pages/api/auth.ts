@@ -8,10 +8,9 @@ export default withSessionRoute(async function handler(
   req: NextApiRequest | any,
   res: NextApiResponse | any,
 ) {
-  const { email } = req.body
+  const { token } = req.body
 
-  req.session.email = email
-  req.session.isLoggedIn = true
+  req.session.token = token
   await req.session.save()
   res.send('Save session')
 })

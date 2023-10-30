@@ -1,25 +1,17 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Footer from '@/components/Footer'
+import Header from '@/components/Header'
+import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/modal'
+import { getCookie, setCookie } from 'cookies-next'
+interface HomeProps {
+  consent: string
+}
 
-export default function Home() {
+/*Homepage : user-dashboard*/
+export default function Home({ consent }: HomeProps) {
   return (
-    <main>
-      <div className="grid place-items-center h-screen">
-        <div className="grid gap-5">
-          <Link href={"/user-login"}>
-            <Button>Login as a User</Button>
-          </Link>
-          {/* <Link href={"/provider-login"}>
-            <Button>Login as a Provider</Button>
-          </Link>{" "} */}
-          <Link href={"/user-registration"}>
-            <Button>Register as a User</Button>
-          </Link>
-          {/* <Link href={"/provider-registration"}>
-            <Button>Register as a Provider</Button>
-          </Link> */}
-        </div>
-      </div>
-    </main>
-  );
+    <>
+      <main></main>
+    </>
+  )
 }

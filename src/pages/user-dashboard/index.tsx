@@ -6,12 +6,38 @@ import { columns } from "@/components/user-dashboard/columns";
 import { DummyData } from "@/lib/utils/UserDashboardData";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { NextApiRequest, NextApiResponse } from "next";
 import { FC, useEffect, useState } from "react";
 
 // Define the interface for the props (currently empty)
-interface IndexProps {}
+interface IndexProps {
+  consent: boolean;
+}
 
-const Index: FC<IndexProps> = async ({}) => {
+interface ServerSideProps {
+  res: NextApiResponse;
+  req: NextApiRequest;
+}
+
+// Create a functional component named Index, which receives no props ({})
+const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
+  const [cookieModal, setCookieModal] = useState(false);
+
+  /* Cookie-consent check & Modal */
+  useEffect(() => {
+    setCookieModal(!consent);
+  }, [consent]);
+  const rightFunc = () => {
+    setCookieModal(false);
+  };
+  const leftFunc = () => {
+    setCookie("cookie-consent", true, {
+      //1 year
+      expires: new Date(Number(new Date()) + 315360000000),
+    });
+    setCookieModal(false);
+  };
+
   // Initialize state to manage the search query
   const [query, setQuery] = useState("");
   // const router = useRouter();
@@ -42,6 +68,19 @@ const Index: FC<IndexProps> = async ({}) => {
   return (
     // Main container for the component
     <main className="container">
+      {cookieModal && (
+        <Modal
+          title={"Cookie Consent"}
+          content={
+            "This website use cookies to help you have a superior and more admissible browsing experience on the website."
+          }
+          rightButton={"Decline"}
+          leftButton={"Accept"}
+          rightFunc={rightFunc}
+          leftFunc={leftFunc}
+        />
+      )}
+
       <div className="relative h-screen">
         <div>
           {/* Render the FullScreenSearchBar component and pass the query state and setQuery function as props */}
@@ -60,3 +99,13 @@ const Index: FC<IndexProps> = async ({}) => {
 
 // Export the Index component as the default export
 export default Index;
+
+export async function getServerSideProps({ req, res }: ServerSideProps) {
+  const consent = getCookie("cookie-consent", { req, res }) || false;
+
+  return {
+    props: {
+      consent,
+    },
+  };
+}
