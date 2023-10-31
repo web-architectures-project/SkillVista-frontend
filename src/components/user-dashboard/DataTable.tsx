@@ -19,6 +19,7 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]; // Column definitions
   data: TData[]; // Data to display in the table
+  queryData: object;
   query: string; // Search query
 }
 
@@ -27,6 +28,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   query,
+  queryData,
 }: DataTableProps<TData, TValue>) {
   // Initialize a table instance using useReactTable
   const table = useReactTable({
@@ -38,7 +40,7 @@ export function DataTable<TData, TValue>({
   return (
     <div
       className={`${
-        query ? "visible " : "invisible "
+        queryData ? "opacity-100 visible" : "invisible opacity-0"
       } rounded-md w-full transition ease-linear duration-1000`}
     >
       <Table>

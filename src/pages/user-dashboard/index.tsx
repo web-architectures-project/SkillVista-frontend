@@ -7,7 +7,12 @@ import { DummyData } from "@/lib/utils/UserDashboardData";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import Data from "../../lib/utils/data/fake-service-data.json";
+import { Modal } from "@/components/ui/modal";
+import { useRouter } from "next/router";
+import { AuthContext } from "@/context/auth-context";
+import { getCookies, setCookie } from "cookies-next";
 
 // Define the interface for the props (currently empty)
 interface IndexProps {
@@ -27,9 +32,11 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   useEffect(() => {
     setCookieModal(!consent);
   }, [consent]);
+
   const rightFunc = () => {
     setCookieModal(false);
   };
+
   const leftFunc = () => {
     setCookie("cookie-consent", true, {
       //1 year
@@ -40,25 +47,25 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 
   // Initialize state to manage the search query
   const [query, setQuery] = useState("");
-  // const router = useRouter();
-  // const authContext = useContext(AuthContext);
+  const [fetchedData, setFetchedData] = useState({});
+  const router = useRouter();
+  const authContext = useContext(AuthContext);
+  const { data, isFetching } = useQuery({
+    queryKey: ["services-data"],
+    queryFn: async () => {
+      const response = await axios.get("http://localhost:3002/customers");
+      return response;
+    },
+  });
+  const fetchDataOnEnter = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFetchedData(data?.data);
+  };
 
   useEffect(() => {
-    console.log(query);
-    (async () => {
-      const services = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}services`
-      );
-      const { data, status } = services;
-      console.log(data);
-    })();
-  }, [query]);
-
-  // const searchServices = async () => {};
-  // const { data, error, isLoading } = useQuery({
-  //   queryKey: ["search-result"],
-  //   queryFn: searchServices,
-  // });
+    console.log(fetchedData);
+    if (query === "") setFetchedData("");
+  }, [fetchedData, query]);
 
   // useEffect to check user authentication and redirect if not authenticated
   // useEffect(() => {
@@ -84,13 +91,20 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
       <div className="relative h-screen">
         <div>
           {/* Render the FullScreenSearchBar component and pass the query state and setQuery function as props */}
-          <FullScreenSearchBar query={query} setQuery={setQuery} />
-          {/* <Button type="submit" title="Submit" onClick={searchServices}>
-            Submit
-          </Button> */}
+          <FullScreenSearchBar
+            queryData={fetchedData}
+            query={query}
+            setQuery={setQuery}
+            fetchDataOnEnter={fetchDataOnEnter}
+          />
 
           {/* Render the DataTable component, passing columns, data, and the search query as props */}
-          <DataTable columns={columns} data={DummyData} query={query} />
+          <DataTable
+            columns={columns}
+            data={DummyData}
+            query={query}
+            queryData={fetchedData}
+          />
         </div>
       </div>
     </main>
@@ -101,7 +115,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 export default Index;
 
 export async function getServerSideProps({ req, res }: ServerSideProps) {
-  const consent = getCookie("cookie-consent", { req, res }) || false;
+  const consent = getCookies("cookie-consent", { req, res }) || false;
 
   return {
     props: {
