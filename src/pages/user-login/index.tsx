@@ -1,4 +1,4 @@
-import { FC, use, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -7,17 +7,11 @@ import * as Yup from 'yup'
 import { apiRequest } from '@/components/apis/default'
 import { useRouter } from '../../../node_modules/next/navigation'
 import Link from 'next/link'
-import { getCookie, setCookie } from 'cookies-next'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '@/store/authSlice'
+import { handleToken, setSession } from '@/lib/utils'
 
 interface indexProps {}
-interface handleTokenProps {
-  token: string
-}
-interface handleSessionProps {
-  token: string
-}
 
 const Index: FC<indexProps> = ({}) => {
   const router = useRouter()
@@ -44,46 +38,16 @@ const Index: FC<indexProps> = ({}) => {
         },
       }).then((res) => {
         if (res?.status === 200) {
-          handleToken({ token: res.message.accessToken })
+          handleToken({ token: res.message.accessToken }).then(() => {
+            dispatch(setAuthState(true))
+            router.push('/user-dashboard')
+          })
         } else {
           setError('User not found')
         }
       })
     },
   })
-
-  /** cookie consent
-   * True :  save in cookie & session
-   * False : save in session */
-  const handleToken = async ({ token }: handleTokenProps) => {
-    const consent = getCookie('cookie-consent')
-    if (consent) {
-      //4 hours
-      await setCookie('cookie-token', token, {
-        expires: new Date(Number(new Date()) + 14400000),
-      })
-    }
-    setSession({ token }).then(() => {
-      dispatch(setAuthState(true))
-      router.push('/user-dashboard')
-    })
-  }
-
-  const setSession = async ({ token }: handleSessionProps) => {
-    try {
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: token }),
-      }
-      const response = await fetch('/api/auth', options)
-      if (response.status !== 200) throw new Error("Can't login")
-    } catch (err) {
-      new Error(err)
-    }
-  }
 
   return (
     <div className="bg-slate-100">
