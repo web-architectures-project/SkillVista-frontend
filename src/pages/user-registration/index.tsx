@@ -1,5 +1,3 @@
-// Import necessary components and libraries
-// import { Signup } from "@/components/apis/default";
 import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input' // Importing the Input component
@@ -9,7 +7,7 @@ import { setAuthState } from '@/store/authSlice'
 import { useFormik } from 'formik' // Importing useFormik hook for form handling
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useState } from 'react' // Importing FC (Functional Component) type from React
+import { FC, useEffect, useState } from 'react' // Importing FC (Functional Component) type from React
 import * as Yup from 'yup' // Import Yup for form validation
 import { useDispatch } from 'react-redux'
 
@@ -36,6 +34,10 @@ const Index: FC<IndexProps> = ({}) => {
     eircode: Yup.string().required(),
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string()
+      .matches(
+        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\*.!@$%^&(){}[\]:;<>,.?/~_+-=|\\]).{8,32}$/,
+        'Password must have atleast 1 Uppercase letter, 1 Lowercase letter, 1 special character and 1 number',
+      )
       .min(6, 'Password must be at least 6 characters long')
       .required('Password is required'),
     repassword: Yup.string().oneOf(
@@ -109,6 +111,12 @@ const Index: FC<IndexProps> = ({}) => {
       }
     })
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setError('')
+    }, 5000)
+  }, [error])
 
   return (
     <div className="bg-slate-100">

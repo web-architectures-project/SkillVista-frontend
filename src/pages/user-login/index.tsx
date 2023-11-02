@@ -12,6 +12,12 @@ import { setAuthState } from '@/store/authSlice'
 import { handleToken, setSession } from '@/lib/utils'
 
 interface indexProps {}
+interface handleTokenProps {
+  token: string
+}
+interface handleSessionProps {
+  token: string
+}
 
 const Index: FC<indexProps> = ({}) => {
   const router = useRouter()
