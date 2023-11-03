@@ -49,25 +49,22 @@ export const setSession = async ({ token }: handleSessionProps) => {
 /** Get User Information with only cookie */
 export const getUserProfile = async ({ token }: handleTokenProps) => {
   const res = await apiRequest({
-    method: 'Post',
+    method: 'POST',
     path: `users/validate/${token}`,
     body: { token: token },
-    token: token,
   })
 
-  const userId = res.message.userId
+  const userId = res.message?.userId
   const userRes = await apiRequest({
-    method: 'Get',
+    method: 'GET',
     path: `users/${userId}`,
-    token: token,
   })
 
-  const profileId = userRes.message.profileId
-  const username = userRes.message.username
+  const profileId = userRes?.message?.profileId
+  const username = userRes?.message?.username
   const profile = await apiRequest({
-    method: 'Get',
+    method: 'GET',
     path: `profiles/${profileId}`,
-    token: token,
   })
   return {
     profile: profile?.message,

@@ -9,7 +9,13 @@ import { useRouter } from '../../../node_modules/next/navigation'
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '@/store/authSlice'
-import { handleToken, setSession } from '@/lib/utils'
+import { getUserProfile, handleToken, setSession } from '@/lib/utils'
+import {
+  setProfileId,
+  setUserId,
+  setUserName,
+  setUserState,
+} from '@/store/userSlice'
 
 interface indexProps {}
 interface handleTokenProps {
@@ -46,6 +52,12 @@ const Index: FC<indexProps> = ({}) => {
         if (res?.status === 200) {
           handleToken({ token: res.message.accessToken }).then(() => {
             dispatch(setAuthState(true))
+            getUserProfile({ token: res.message.accessToken }).then((res) => {
+              dispatch(setUserState(res?.profile))
+              dispatch(setUserName(res?.username))
+              dispatch(setProfileId(res?.profileId))
+              dispatch(setUserId(res?.userId))
+            })
             router.push('/user-dashboard')
           })
         } else {
