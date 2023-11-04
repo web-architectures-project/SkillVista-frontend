@@ -48,20 +48,17 @@ const Index: FC<indexProps> = ({}) => {
     validationSchema: ProfileSchema, // Apply the Yup schema for validation
     onSubmit: () => {
       // console.log(formik.values)
-      apiRequest({
-        method: 'Put',
-        path: `profiles/${profileId}`,
-        body: {
-          user_id: userId,
-          ...formik.values,
-        },
-        token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk4ODY5MDU0LCJleHAiOjE2OTg4ODM0NTR9.Ajgng80NDHnva0jN_m9A_FKRlRzqvOcxadJI_rVMcDo',
-      }).then((res) => {
-        console.log(res)
-        dispatch(setUserState(formik.values))
-        alert('save!')
-      })
+      // apiRequest({
+      //   method: 'PUT',
+      //   path: `profiles/${profileId}`,
+      //   body: {
+      //     user_id: userId,
+      //     ...formik.values,
+      //   },
+      //   console.log(res)
+      //   dispatch(setUserState(formik.values))
+      //   alert('save!')
+      // })
     },
   })
 

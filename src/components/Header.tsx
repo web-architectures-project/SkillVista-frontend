@@ -79,7 +79,7 @@ const Header = () => {
 
       <div className="items-center w-auto hidden md:flex">
         <div className="lg:flex-grow lg:content-center">
-          <Link href="/user-login" className="inline-block  mr-4">
+          <Link href="/provider-registration" className="inline-block  mr-4">
             Become a Provider
           </Link>
           {authState ? (
@@ -117,7 +117,7 @@ const Header = () => {
         <div className="md:flex lg:items-center md:w-auto w-full block items-center">
           <div className="lg:flex-grow text-end">
             <Link
-              href="/user-login"
+              href="/provider-registration"
               className="block mt-4 lg:inline-block lg:mt-0 mr-4"
             >
               Become a Provider
@@ -130,21 +130,21 @@ const Header = () => {
                 >
                   <p>Profile</p>
                 </Link>
-                <Link
-                  href="/user-registration"
-                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
-                >
-                  Logout
-                </Link>
-              </>
-            ) : (
-              <>
                 <div
                   onClick={() => handleLogout()}
                   className="block mt-4 lg:inline-block lg:mt-0 mr-4"
                 >
-                  Login
+                  Logout
                 </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/user-login"
+                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                >
+                  Login
+                </Link>
                 <Link
                   href="/user-registration"
                   className="block mt-4 lg:inline-block lg:mt-0 mr-4 "
