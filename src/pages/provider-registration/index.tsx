@@ -1,142 +1,163 @@
 // Import necessary components and libraries
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Importing the Input component
-import { Label } from "@/components/ui/label"; // Importing the Label component
-import { useFormik } from "formik"; // Importing useFormik hook for form handling
-import { useRouter } from "next/router";
-import { FC } from "react"; // Importing FC (Functional Component) type from React
-import * as Yup from "yup"; // Import Yup for form validation
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input' // Importing the Input component
+import { Label } from '@/components/ui/label' // Importing the Label component
+import { TextArea } from '@/components/ui/textArea'
+import { useFormik } from 'formik' // Importing useFormik hook for form handling
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { FC, useEffect } from 'react' // Importing FC (Functional Component) type from React
+import * as Yup from 'yup' // Import Yup for form validation
 
 // Define the props interface for the 'index' component
 interface IndexProps {}
 
 // Define the 'index' component as a functional component
 const Index: FC<IndexProps> = ({}) => {
-  const router = useRouter();
-  const approved = true;
+  const router = useRouter()
+  const approved = true
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
     username: Yup.string()
-      .min(2, "Too Short!")
-      .max(50, "Too Long!")
-      .required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
+      .min(2, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required'),
+    email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters long")
-      .required("Password is required"),
+      .min(6, 'Password must be at least 6 characters long')
+      .required('Password is required'),
     repassword: Yup.string().oneOf(
-      [Yup.ref("password")],
-      "Passwords dont match"
+      [Yup.ref('password')],
+      'Passwords dont match',
     ),
-  });
+  })
 
   // Initialize Formik for form management
   const formik = useFormik({
     initialValues: {
-      username: "", // Initial value for the 'username' field
-      email: "",
-      password: "",
-      repassword: "",
+      username: '', // Initial value for the 'username' field
+      email: '',
+      password: '',
+      repassword: '',
     },
     validationSchema: RegistrationSchema, // Apply the Yup schema for validation
     onSubmit: () => {
-      if (approved) {
-        console.log(formik.values);
-        router.push("/user-dashboard");
-      }
+      console.log(formik)
+      // console.log(formik)
+      // apiRequest({
+      //   method: 'POST',
+      //   path: 'users/register',
+      //   body: {
+      //     username: formik.values.username,
+      //     email: 'string',
+      //     password: 'string',
+      //     user_type: 'string',
+      //     first_name: 'string',
+      //     last_name: 'string',
+      //     phone_number: 'string',
+      //     address: 'string',
+      //     city: 'string',
+      //     county: 'string',
+      //     Eircode: 'string',
+      //     profile_picture_url: 'string',
+      //     bio: 'string',
+      //   },
+      // })
     },
-  });
+  })
+
+  useEffect(() => {}, [formik.values])
 
   return (
     // Render the main content within a grid layout
-    <div className="grid h-screen place-items-center">
-      {/* Forms Code */}
-      <div
-        id="forms-wrapper"
-        className="p-5 border-2 border-black rounded-lg 2xl:w-fit "
-      >
-        <h1 className="text-3xl text-center font-bold">
-          Provider Registration
-        </h1>
-        <form onSubmit={formik?.handleSubmit}>
-          {/* Create a grid layout with two columns and gap between them */}
-          <div className="grid grid-cols-2 gap-5 aspect-auto">
-            <div className="col-span-2">
-              <Label>Username</Label>
-              {/* Input field for entering a username */}
-              <Input
-                type="text"
-                name="username"
-                placeholder="Please enter your username"
-                className="form-input"
-                value={formik?.values?.username}
-                onChange={formik?.handleChange}
+    <div className="lg:flex lg:flex-row h-screen w-full">
+      <div className="hidden lg:flex lg:flex-col lg:justify-center lg:w-4/12 bg-gradient-to-bl from-blue-500 via-sky-400 to-blue-500 text-center ">
+        <div className="text-white text-3xl font-semibold tracking-wide ">
+          Let's Get
+        </div>
+        <div className="text-white text-6xl font-bold tracking-wide ">
+          Started
+        </div>
+        <div className="text-white text-sm font-light tracking-wide px-10 mt-3">
+          Get notified when you get an order and use our system to discuss
+          details with customers. And get paid on time, every time. Payment is
+          available for withdrawal as soon as it clears.
+        </div>
+      </div>
+      <div className="flex flex-col lg:w-8/12 w-full py-5 px-8">
+        <div className="text-center text-gray-500 text-2xl font-semibold border-b border-gray-200 pb-3">
+          REGISTER WITH PERSONAL INFO AND PROFESSIONAL INFO
+        </div>
+        <div className="pt-10">
+          <form onSubmit={formik?.handleSubmit}>
+            <div className="pb-3 flex justify-center">
+              <Image
+                src={'/upload.png'}
+                width={180}
+                height={180}
+                alt="Picture of the author"
               />
-              {formik?.errors?.username && formik.touched.username ? (
-                <p>{formik.errors.username}</p>
-              ) : (
-                ""
-              )}
             </div>
-            <div className="col-span-2">
-              <Label>Email</Label>
-              {/* Input field for re-entering the password */}
-              <Input
-                type="email"
-                name="email"
-                placeholder="Please enter your email"
-                onChange={formik.handleChange}
-                value={formik.values.email}
-                className="form-input"
+            <div className="pb-5 flex justify-center">
+              <Button
+                // onClick={handleClick}
+                className="bg-mainblue hover:bg-slate-300"
+              >
+                Upload a file
+              </Button>
+              <input
+                type="file"
+                // onChange={handleChange}
+                // ref={hiddenFileInput}
+                style={{ display: 'none' }}
               />
-              {formik?.errors?.email && formik.touched.email ? (
-                <p>{formik.errors.email}</p>
-              ) : (
-                ""
-              )}
             </div>
-            <div>
-              <Label>Password</Label>
-              {/* Input field for entering a password */}
+            <div className="pb-3">
+              <Label>Title</Label>
               <Input
                 type="password"
                 name="password"
-                placeholder="Please enter your password"
-                onChange={formik.handleChange}
+                placeholder="Password"
                 value={formik.values.password}
-                className="form-input"
-              />
-              {formik?.errors?.password && formik.touched.password ? (
-                <p>{formik.errors.password}</p>
-              ) : (
-                ""
-              )}
-            </div>
-            <div>
-              <Label>Re-Enter password</Label>
-              {/* Input field for re-entering the password */}
-              <Input
-                type="password"
-                name="repassword"
-                placeholder="Please re-enter your password"
                 onChange={formik.handleChange}
-                value={formik.values.repassword}
                 className="form-input"
               />
-              {formik?.errors?.repassword && formik.touched.repassword ? (
-                <p>{formik.errors.repassword}</p>
-              ) : (
-                ""
-              )}
             </div>
-          </div>
-          <div className="flex justify-center pt-5">
-            <Button type="submit">Register</Button>
-          </div>
-        </form>
+            <div className="pb-3">
+              <Label>Desciprtion</Label>
+              <TextArea
+                rows="5"
+                placeholder="Tell us about yourservice"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+              />
+            </div>
+
+            <div className="pb-3">
+              <Label>Price</Label>
+              <div className="flex items-center">
+                <Input
+                  type="number"
+                  name="price"
+                  placeholder="Price"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  className="form-input w-1/3"
+                />
+                <div className="ml-3">€</div>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" className="bg-mainblue hover:bg-slate-300">
+                Save
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Index; // Export the 'index' component as the default export
+export default Index // Export the 'index' component as the default export

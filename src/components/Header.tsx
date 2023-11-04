@@ -3,6 +3,13 @@ import { useEffect, useState } from 'react'
 import { selectAuthState, setAuthState } from '@/store/authSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteCookie, getCookie } from 'cookies-next'
+import {
+  setUserName,
+  setUserState,
+  setProfileId,
+  setUserId,
+} from '@/store/userSlice'
+import { getUserProfile } from '@/lib/utils'
 
 const Header = () => {
   const [toggle, setToggle] = useState(false)
@@ -12,8 +19,15 @@ const Header = () => {
   /** Detect cookie when user leave and come back to the website */
   useEffect(() => {
     const token = getCookie('cookie-token')
+
     if (token) {
       dispatch(setAuthState(true))
+      getUserProfile({ token }).then((res) => {
+        dispatch(setUserState(res?.profile))
+        dispatch(setUserName(res?.username))
+        dispatch(setProfileId(res?.profileId))
+        dispatch(setUserId(res?.userId))
+      })
     }
   }, [])
 
@@ -63,18 +77,26 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="items-center w-auto hidden md:flex ">
-        <div className="lg:flex-grow text-end">
-          <Link href="/user-login" className=" inline-block  mr-4">
+      <div className="items-center w-auto hidden md:flex">
+        <div className="lg:flex-grow lg:content-center">
+          <Link href="/provider-registration" className="inline-block  mr-4">
             Become a Provider
           </Link>
           {authState ? (
-            <div
-              onClick={() => handleLogout()}
-              className=" lg:inline-block mr-4 font-bold  px-2 py-1"
-            >
-              Logout
-            </div>
+            <>
+              <Link
+                href="/user-profile"
+                className="lg:inline-block mr-4  px-2 py-1"
+              >
+                <p>Profile</p>
+              </Link>
+              <div
+                onClick={() => handleLogout()}
+                className="lg:inline-block mr-4 font-bold  px-2 py-1"
+              >
+                <p>Logout</p>
+              </div>
+            </>
           ) : (
             <>
               <Link href="/user-login" className=" inline-block  mr-4">
@@ -95,26 +117,34 @@ const Header = () => {
         <div className="md:flex lg:items-center md:w-auto w-full block items-center">
           <div className="lg:flex-grow text-end">
             <Link
-              href="/user-login"
+              href="/provider-registration"
               className="block mt-4 lg:inline-block lg:mt-0 mr-4"
             >
               Become a Provider
             </Link>
             {authState ? (
-              <Link
-                href="/user-registration"
-                className="block mt-4 lg:inline-block lg:mt-0 mr-4 "
-              >
-                Logout
-              </Link>
-            ) : (
               <>
+                <Link
+                  href="/user-profile"
+                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                >
+                  <p>Profile</p>
+                </Link>
                 <div
                   onClick={() => handleLogout()}
                   className="block mt-4 lg:inline-block lg:mt-0 mr-4"
                 >
-                  Login
+                  Logout
                 </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/user-login"
+                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                >
+                  Login
+                </Link>
                 <Link
                   href="/user-registration"
                   className="block mt-4 lg:inline-block lg:mt-0 mr-4 "

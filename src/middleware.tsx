@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server'
 import { getCookie } from 'cookies-next'
 import { getIronSession } from 'iron-session/edge'
 import axios from 'axios'
+import { customAxios } from './components/apis/default'
 
 /** Maintain a login */
 export const middleware = async (req: NextRequest, res: NextResponse) => {
@@ -11,8 +12,16 @@ export const middleware = async (req: NextRequest, res: NextResponse) => {
     password: 'SkillvistaSkillvistaSkillvistaSkillvistaSkillvista',
     cookieName: 'Skillvista-cookie',
   })
-  if (token || session.token) {
-    axios.defaults.headers.common['x-rapid-api-key'] = token || session.token
+  if (!token && session.token) {
+    customAxios.interceptors.request.use(
+      async (config) => {
+        config.headers.Authorization = `Bearer ${session}`
+        return config
+      },
+      (error) => {
+        return Promise.reject(error)
+      },
+    )
   }
 }
 
