@@ -1,68 +1,42 @@
-import axios from "axios";
+import axios from 'axios'
+import { getCookie } from 'cookies-next'
 
 interface apiRequesProps {
-  method: string;
-  path: string;
-  body?: Object;
+  method: string
+  path: string
+  body?: Object
 }
+
+export const customAxios = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+})
+
+customAxios.interceptors.request.use(
+  async (config) => {
+    const accessToken = getCookie('cookie-token')
+    config.headers.Authorization = `Bearer ${accessToken}`
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  },
+)
 
 export async function apiRequest({ method, path, body }: apiRequesProps) {
   try {
-    const res = await axios({
-      method: method,
-      url: process.env.NEXT_PUBLIC_API_URL + path,
-      data: body,
-    });
-
-    return { status: 200, message: res.data };
+    let res = null
+    if (method === 'GET') {
+      res = await customAxios.get(path)
+    } else if (method === 'POST') {
+      res = await customAxios.post(path, body)
+    } else if (method === 'PUT') {
+      res = await customAxios.put(path, body)
+    } else if (method === 'DELETE') {
+      res = await customAxios.delete(path, body)
+    }
+    return { status: res?.status || res?.data?.status, message: res?.data }
   } catch (error) {
-    return { status: error?.response.status, message: error?.message };
+    console.log(error)
+    return { status: error?.response.status, message: error?.message }
   }
 }
-
-export async function Signin(data: SigninData) {
-  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "users/login", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: data.email,
-      password: data.password,
-    }),
-  });
-
-  if (res.status === 200) {
-    return res.json();
-  }
-}
-
-// const requestFunc = async (
-//   method: string,
-//   apiUrl: string,
-//   data: object
-// ): Promise<Response> => {
-//   try {
-//     const response = await fetch(process.env.NEXT_PUBLIC_API_URL + apiUrl, {
-//       method: `'${method}'`, // HTTP method: e.g., 'GET', 'POST'
-//       headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(data), // Include data as the request body
-//     });
-
-//     if (!response.ok) {
-//       // Handle non-successful responses here, e.g., throw an error
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
-
-//     return response;
-//   } catch (error: any) {
-//     // Handle fetch errors or JSON parsing errors here
-//     throw new Error(`Fetch error: ${error.message}`);
-//   }
-// };
-
-// export default requestFunc;

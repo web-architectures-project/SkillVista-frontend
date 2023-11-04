@@ -1,61 +1,122 @@
-// Import necessary components and libraries
-import { Signup } from "@/components/apis/default";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Importing the Input component
-import { Label } from "@/components/ui/label"; // Importing the Label component
-import { useFormik } from "formik"; // Importing useFormik hook for form handling
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react"; // Importing FC (Functional Component) type from React
-import * as Yup from "yup"; // Import Yup for form validation
+import { apiRequest } from '@/components/apis/default'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input' // Importing the Input component
+import { Label } from '@/components/ui/label' // Importing the Label component
+import { handleToken } from '@/lib/utils'
+import { setAuthState } from '@/store/authSlice'
+import { useFormik } from 'formik' // Importing useFormik hook for form handling
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FC, useEffect, useState } from 'react' // Importing FC (Functional Component) type from React
+import * as Yup from 'yup' // Import Yup for form validation
+import { useDispatch } from 'react-redux'
 
 // Define the props interface for the 'index' component
 interface IndexProps {}
 
 // Define the 'index' component as a functional component
 const Index: FC<IndexProps> = ({}) => {
-  const router = useRouter();
-  const [error, setError] = useState<string>();
+  const router = useRouter()
+  const [error, setError] = useState<string>()
+  const dispatch = useDispatch()
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
     username: Yup.string()
-      .min(2, "Too Short!")
-      .max(50, "Too Long!")
-      .required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
+      .min(2, 'Too Short!')
+      .max(50, 'Too Long!')
+      .required('Required'),
+    first_name: Yup.string().required(),
+    last_name: Yup.string().required(),
+    phone_number: Yup.number().required(),
+    address: Yup.string().required(),
+    county: Yup.string().required(),
+    city: Yup.string().required(),
+    eircode: Yup.string().required(),
+    email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string()
       .matches(
         /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\*.!@$%^&(){}[\]:;<>,.?/~_+-=|\\]).{8,32}$/,
-        "Password must have atleast 1 Uppercase letter, 1 Lowercase letter, 1 special character and 1 number"
+        'Password must have atleast 1 Uppercase letter, 1 Lowercase letter, 1 special character and 1 number',
       )
-      .min(6, "Password must be at least 6 characters long")
-      .required("Password is required"),
+      .min(6, 'Password must be at least 6 characters long')
+      .required('Password is required'),
     repassword: Yup.string().oneOf(
-      [Yup.ref("password")],
-      "Passwords dont match"
+      [Yup.ref('password')],
+      'Passwords dont match',
     ),
-  });
+  })
 
   // Initialize Formik for form management
   const formik = useFormik({
     initialValues: {
-      username: "", // Initial value for the 'username' field
-      email: "",
-      password: "",
-      repassword: "",
+      username: '', // Initial value for the 'username' field
+      email: '',
+      password: '',
+      repassword: '',
+      first_name: '',
+      last_name: '',
+      phone_number: '',
+      address: '',
+      county: '',
+      city: '',
+      eircode: '',
     },
     validationSchema: RegistrationSchema, // Apply the Yup schema for validation
-    onSubmit: async () => {
-      const signupResponse = await Signup(formik.values);
-      console.log(signupResponse);
+    onSubmit: () => {
+      apiRequest({
+        method: 'POST',
+        path: 'users/register',
+        body: {
+          username: formik.values.username,
+          email: formik.values.email,
+          password: formik.values.password,
+          user_type: 'user',
+          first_name: formik.values.first_name,
+          last_name: formik.values.last_name,
+          phone_number: String(formik.values.phone_number),
+          address: formik.values.address,
+          city: formik.values.city,
+          county: formik.values.county,
+
+          Eircode: formik.values.eircode,
+        },
+      }).then((res) => {
+        if (res?.status === 201) {
+          handleLogin()
+        } else {
+          setError(res?.message?.message)
+        }
+      })
     },
-  });
+  })
+
+  const handleLogin = () => {
+    apiRequest({
+      method: 'POST',
+      path: 'users/login',
+      body: {
+        email: formik.values.email,
+        password: formik.values.password,
+      },
+    }).then((res) => {
+      console.log('hi')
+      console.log(res)
+      if (res?.status === 200) {
+        handleToken({ token: res.message.accessToken }).then(() => {
+          dispatch(setAuthState(true))
+          router.push('/user-dashboard')
+        })
+      } else {
+        setError(res.message)
+      }
+    })
+  }
 
   useEffect(() => {
     setTimeout(() => {
-      setError("");
-    }, 5000);
-  }, [error]);
+      setError('')
+    }, 5000)
+  }, [error])
 
   return (
     <div className="bg-slate-100">
@@ -74,7 +135,7 @@ const Index: FC<IndexProps> = ({}) => {
                 <Input
                   type="text"
                   name="username"
-                  placeholder="Please enter your username"
+                  placeholder="ex) So_nickname"
                   className="form-input"
                   value={formik?.values?.username}
                   onChange={formik?.handleChange}
@@ -84,16 +145,69 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.username}
                   </p>
                 ) : (
-                  ""
+                  ''
+                )}
+              </div>
+              <div>
+                <Label>First name</Label>
+                <Input
+                  type="text"
+                  name="first_name"
+                  placeholder="ex) Soyeon"
+                  onChange={formik.handleChange}
+                  value={formik?.values?.first_name}
+                  className="form-input"
+                />
+                {formik?.errors?.first_name && formik.touched.first_name ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.first_name}
+                  </p>
+                ) : (
+                  ''
+                )}
+              </div>
+              <div>
+                <Label>Last name</Label>
+                <Input
+                  type="text"
+                  name="last_name"
+                  placeholder="ex) Lee"
+                  onChange={formik.handleChange}
+                  value={formik.values.last_name}
+                  className="form-input"
+                />
+                {formik?.errors?.last_name && formik.touched.last_name ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.last_name}
+                  </p>
+                ) : (
+                  ''
+                )}
+              </div>
+              <div className="col-span-2">
+                <Label>Phone number</Label>
+                <Input
+                  type="number"
+                  name="phone_number"
+                  placeholder="ex) 0987654322"
+                  className="form-input"
+                  value={formik?.values?.phone_number}
+                  onChange={formik?.handleChange}
+                />
+                {formik?.errors?.phone_number && formik.touched.phone_number ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.phone_number}
+                  </p>
+                ) : (
+                  ''
                 )}
               </div>
               <div className="col-span-2">
                 <Label>Email</Label>
-                {/* Input field for re-entering the password */}
                 <Input
                   type="email"
                   name="email"
-                  placeholder="Please enter your email"
+                  placeholder="ex ) D123456@mytudublin.ie"
                   onChange={formik.handleChange}
                   value={formik.values.email}
                   className="form-input"
@@ -103,12 +217,83 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.email}
                   </p>
                 ) : (
-                  ""
+                  ''
+                )}
+              </div>
+              <div>
+                <Label>City</Label>
+                <Input
+                  type="text"
+                  name="city"
+                  placeholder="ex) Dublin"
+                  onChange={formik.handleChange}
+                  value={formik.values.city}
+                  className="form-input"
+                />
+                {formik?.errors?.city && formik.touched.city ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.city}
+                  </p>
+                ) : (
+                  ''
+                )}
+              </div>
+              <div>
+                <Label>County</Label>
+                <Input
+                  type="text"
+                  name="county"
+                  placeholder="ex) Dublin 9"
+                  onChange={formik.handleChange}
+                  value={formik.values.county}
+                  className="form-input"
+                />
+                {formik?.errors?.county && formik.touched.county ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.county}
+                  </p>
+                ) : (
+                  ''
+                )}
+              </div>
+              <div className="col-span-2">
+                <Label>Eircode</Label>
+                <Input
+                  type="text"
+                  name="eircode"
+                  placeholder="ex) A65F4E2"
+                  onChange={formik.handleChange}
+                  value={formik.values.eircode}
+                  className="form-input"
+                />
+                {formik?.errors?.eircode && formik.touched.eircode ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.eircode}
+                  </p>
+                ) : (
+                  ''
+                )}
+              </div>
+              <div className="col-span-2">
+                <Label>Address</Label>
+                <Input
+                  type="text"
+                  name="address"
+                  placeholder="ex) Address"
+                  onChange={formik.handleChange}
+                  value={formik.values.address}
+                  className="form-input"
+                />
+                {formik?.errors?.address && formik.touched.address ? (
+                  <p className="text-red-400 text-sm mt-1">
+                    {formik.errors.address}
+                  </p>
+                ) : (
+                  ''
                 )}
               </div>
               <div>
                 <Label>Password</Label>
-                {/* Input field for entering a password */}
                 <Input
                   type="password"
                   name="password"
@@ -122,12 +307,11 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.password}
                   </p>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
               <div>
                 <Label>Re-Enter password</Label>
-                {/* Input field for re-entering the password */}
                 <Input
                   type="password"
                   name="repassword"
@@ -141,7 +325,7 @@ const Index: FC<IndexProps> = ({}) => {
                     {formik.errors.repassword}
                   </p>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </div>
@@ -159,15 +343,15 @@ const Index: FC<IndexProps> = ({}) => {
             </div>
           </form>
           <div className="mt-10 text-center">
-            <span className="font-lights">Already have an account?</span>{" "}
+            <span className="font-lights">Already have an account?</span>{' '}
             <span className="text-mainblue font-lights">
-              <Link href={"/user-login"}>Log in</Link>
+              <Link href={'/user-login'}>Log in</Link>
             </span>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Index; // Export the 'index' component as the default export
+export default Index // Export the 'index' component as the default export

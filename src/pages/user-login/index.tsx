@@ -1,91 +1,71 @@
-import { FC, use, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { apiRequest } from "@/components/apis/default";
-import { useRouter } from "../../../node_modules/next/navigation";
-import Link from "next/link";
-import { getCookie, setCookie } from "cookies-next";
-import { useDispatch } from "react-redux";
-import { setAuthState } from "@/store/authSlice";
+import { FC, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { apiRequest } from '@/components/apis/default'
+import { useRouter } from '../../../node_modules/next/navigation'
+import Link from 'next/link'
+import { useDispatch } from 'react-redux'
+import { setAuthState } from '@/store/authSlice'
+import { getUserProfile, handleToken, setSession } from '@/lib/utils'
+import {
+  setProfileId,
+  setUserId,
+  setUserName,
+  setUserState,
+} from '@/store/userSlice'
 
 interface indexProps {}
 interface handleTokenProps {
-  token: string;
+  token: string
 }
 interface handleSessionProps {
-  token: string;
+  token: string
 }
 
 const Index: FC<indexProps> = ({}) => {
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const [error, setError] = useState<string>("");
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const [error, setError] = useState<string>('')
   const signinSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().required("Password is required"),
-  });
+    email: Yup.string().email('Invalid email').required('Required'),
+    password: Yup.string().required('Password is required'),
+  })
 
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
     validationSchema: signinSchema,
     onSubmit: async () => {
       apiRequest({
-        method: "POST",
-        path: "users/login",
+        method: 'POST',
+        path: 'users/login',
         body: {
           email: formik.values.email,
           password: formik.values.password,
         },
       }).then((res) => {
         if (res?.status === 200) {
-          handleToken({ token: res.message.accessToken });
+          handleToken({ token: res.message.accessToken }).then(() => {
+            dispatch(setAuthState(true))
+            getUserProfile({ token: res.message.accessToken }).then((res) => {
+              dispatch(setUserState(res?.profile))
+              dispatch(setUserName(res?.username))
+              dispatch(setProfileId(res?.profileId))
+              dispatch(setUserId(res?.userId))
+            })
+            router.push('/user-dashboard')
+          })
         } else {
-          setError("User not found");
+          setError('User not found')
         }
-      });
+      })
     },
-  });
-
-  /** cookie consent
-   * True :  save in cookie & session
-   * False : save in session */
-  const handleToken = async ({ token }: handleTokenProps) => {
-    const consent = getCookie("cookie-consent");
-    if (consent) {
-      //4 hours
-      await setCookie("cookie-token", token, {
-        expires: new Date(Number(new Date()) + 14400000),
-      });
-    }
-    setSession({ token }).then(() => {
-      dispatch(setAuthState(true));
-      router.push("/user-dashboard");
-    });
-  };
-
-  const setSession = async ({ token }: handleSessionProps) => {
-    try {
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: token }),
-      };
-      const response = await fetch("/api/auth", options);
-      if (response.status !== 200) throw new Error("Can't login");
-    } catch (err) {
-      console.error(err);
-
-      // new Error(err);
-    }
-  };
+  })
 
   return (
     <div className="bg-slate-100">
@@ -115,7 +95,7 @@ const Index: FC<indexProps> = ({}) => {
                 className="form-input"
               />
             </div>
-            {error ? <p className="text-red-400">{error}</p> : ""}
+            {error ? <p className="text-red-400">{error}</p> : ''}
             <div className="flex flex-col mt-5">
               <Button type="submit" className="bg-mainblue hover:bg-slate-300">
                 Login
@@ -124,7 +104,7 @@ const Index: FC<indexProps> = ({}) => {
           </form>
           <div className="mt-10 text-center">
             {/* eslint-disable-next-line react/no-unescaped-entities */}
-            <span className="font-lights">Don't have an account?</span>{" "}
+            <span className="font-lights">Don't have an account?</span>{' '}
             <span className="text-mainblue font-lights">
               <Link href="/user-registration">Sign up.</Link>
             </span>
@@ -132,7 +112,7 @@ const Index: FC<indexProps> = ({}) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
