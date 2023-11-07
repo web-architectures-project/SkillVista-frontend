@@ -6,7 +6,6 @@ import {
   selectProfileId,
   selectUserId,
   selectUserState,
-  setUserState,
 } from '@/store/userSlice'
 import { useFormik } from 'formik'
 import Image from 'next/image'
@@ -21,6 +20,9 @@ const Index: FC<indexProps> = ({}) => {
   const userState = useSelector(selectUserState)
   const userId = useSelector(selectUserId)
   const profileId = useSelector(selectProfileId)
+  const hiddenFileInput = useRef<any>(null)
+  const [profileImg, setProfileImg] = useState<any>()
+  const [changedImage, setChangedImage] = useState()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -30,6 +32,7 @@ const Index: FC<indexProps> = ({}) => {
     county: Yup.string().required(),
     city: Yup.string().required(),
     Eircode: Yup.string().required(),
+    profile_picture_url: Yup.string(),
     bio: Yup.string(),
   })
 
@@ -43,27 +46,42 @@ const Index: FC<indexProps> = ({}) => {
       county: userState.county,
       city: userState.county,
       Eircode: userState.Eircode,
+      profile_picture_url: userState.profile_picture_url,
       bio: userState.bio,
     },
-    validationSchema: ProfileSchema, // Apply the Yup schema for validation
+    validationSchema: ProfileSchema,
     onSubmit: () => {
-      // console.log(formik.values)
-      // apiRequest({
-      //   method: 'PUT',
-      //   path: `profiles/${profileId}`,
-      //   body: {
-      //     user_id: userId,
-      //     ...formik.values,
-      //   },
-      //   console.log(res)
-      //   dispatch(setUserState(formik.values))
-      //   alert('save!')
-      // })
+      apiRequest({
+        method: 'PUT',
+        path: `profiles/${profileId}`,
+        body: formik.values,
+      }).then((res) => {
+        if (res.status === 200) {
+          if (profileImg) {
+            apiRequest({
+              method: 'POST',
+              path: `profiles/image/${profileId}`,
+              body: { file: profileImg },
+              header: {
+                headers: {
+                  'content-type': 'multipart/form-data',
+                },
+              },
+            }).then((res) => {
+              console.log(res)
+              if (res.status === 200) {
+                alert('saved successfully!')
+              }
+            })
+          } else {
+            if (res.status === 200) {
+              alert('saved successfully!')
+            }
+          }
+        }
+      })
     },
   })
-
-  const hiddenFileInput = useRef<any>(null)
-  const [profileImg, setProfileImg] = useState<any>()
 
   const handleClick = () => {
     hiddenFileInput.current.click()
@@ -71,10 +89,14 @@ const Index: FC<indexProps> = ({}) => {
 
   const handleChange = (event: any) => {
     const fileUploaded = event.target.files[0]
+
+    setProfileImg(fileUploaded)
+
     const fileReader = new FileReader()
     fileReader.addEventListener('load', () => {
-      setProfileImg(fileReader.result)
+      setChangedImage(fileReader?.result)
     })
+
     fileReader.readAsDataURL(fileUploaded)
   }
   return (
@@ -85,7 +107,13 @@ const Index: FC<indexProps> = ({}) => {
         <div className=" p-8">
           <div className="pb-3 flex justify-center">
             <Image
-              src={profileImg ? profileImg : '/user.png'}
+              src={
+                changedImage
+                  ? changedImage
+                  : userState.profile_picture_url
+                  ? userState.profile_picture_url
+                  : '/user.png'
+              }
               width={180}
               height={180}
               alt="Picture of the author"

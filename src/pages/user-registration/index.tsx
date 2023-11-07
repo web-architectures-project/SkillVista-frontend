@@ -99,8 +99,6 @@ const Index: FC<IndexProps> = ({}) => {
         password: formik.values.password,
       },
     }).then((res) => {
-      console.log('hi')
-      console.log(res)
       if (res?.status === 200) {
         handleToken({ token: res.message.accessToken }).then(() => {
           dispatch(setAuthState(true))
