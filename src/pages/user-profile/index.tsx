@@ -68,14 +68,13 @@ const Index: FC<indexProps> = ({}) => {
                 },
               },
             }).then((res) => {
-              console.log(res)
               if (res.status === 200) {
-                alert('saved successfully!')
+                // alert('saved successfully!')
               }
             })
           } else {
             if (res.status === 200) {
-              alert('saved successfully!')
+              // alert('saved successfully!')
             }
           }
         }

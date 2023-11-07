@@ -34,9 +34,7 @@ export async function apiRequest({
     if (method === 'GET') {
       res = await customAxios.get(path)
     } else if (method === 'POST') {
-      res = await customAxios.post(path, body, {
-        headers: { 'content-type': 'multipart/form-data' },
-      })
+      res = await customAxios.post(path, body, header)
     } else if (method === 'PUT') {
       res = await customAxios.put(path, body)
     } else if (method === 'DELETE') {
