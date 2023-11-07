@@ -5,6 +5,7 @@ interface apiRequesProps {
   method: string
   path: string
   body?: Object
+  header?: Object
 }
 
 export const customAxios = axios.create({
@@ -22,13 +23,18 @@ customAxios.interceptors.request.use(
   },
 )
 
-export async function apiRequest({ method, path, body }: apiRequesProps) {
+export async function apiRequest({
+  method,
+  path,
+  body,
+  header,
+}: apiRequesProps) {
   try {
     let res = null
     if (method === 'GET') {
       res = await customAxios.get(path)
     } else if (method === 'POST') {
-      res = await customAxios.post(path, body)
+      res = await customAxios.post(path, body, header)
     } else if (method === 'PUT') {
       res = await customAxios.put(path, body)
     } else if (method === 'DELETE') {
