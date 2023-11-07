@@ -12,7 +12,7 @@ export interface UserState {
     city: string
     county: string
     Eircode: string
-    profile_url: string
+    profile_picture_url: string
     bio: string
   }
   username: string
@@ -30,7 +30,7 @@ const initialState: UserState = {
     city: '',
     county: '',
     Eircode: '',
-    profile_url: '',
+    profile_picture_url: '',
     bio: '',
   },
   username: '',
