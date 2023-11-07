@@ -1,25 +1,21 @@
 import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input' // Importing the Input component
-import { Label } from '@/components/ui/label' // Importing the Label component
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { handleToken } from '@/lib/utils'
 import { setAuthState } from '@/store/authSlice'
-import { useFormik } from 'formik' // Importing useFormik hook for form handling
+import { useFormik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useEffect, useState } from 'react' // Importing FC (Functional Component) type from React
-import * as Yup from 'yup' // Import Yup for form validation
+import { FC, useEffect, useState } from 'react'
+import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
 
-// Define the props interface for the 'index' component
 interface IndexProps {}
-
-// Define the 'index' component as a functional component
 const Index: FC<IndexProps> = ({}) => {
   const router = useRouter()
   const [error, setError] = useState<string>()
   const dispatch = useDispatch()
-  // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
     username: Yup.string()
       .min(2, 'Too Short!')
@@ -46,10 +42,9 @@ const Index: FC<IndexProps> = ({}) => {
     ),
   })
 
-  // Initialize Formik for form management
   const formik = useFormik({
     initialValues: {
-      username: '', // Initial value for the 'username' field
+      username: '',
       email: '',
       password: '',
       repassword: '',
@@ -61,7 +56,7 @@ const Index: FC<IndexProps> = ({}) => {
       city: '',
       eircode: '',
     },
-    validationSchema: RegistrationSchema, // Apply the Yup schema for validation
+    validationSchema: RegistrationSchema,
     onSubmit: () => {
       apiRequest({
         method: 'POST',
@@ -99,8 +94,6 @@ const Index: FC<IndexProps> = ({}) => {
         password: formik.values.password,
       },
     }).then((res) => {
-      console.log('hi')
-      console.log(res)
       if (res?.status === 200) {
         handleToken({ token: res.message.accessToken }).then(() => {
           dispatch(setAuthState(true))
@@ -121,17 +114,14 @@ const Index: FC<IndexProps> = ({}) => {
   return (
     <div className="bg-slate-100">
       <div className="flex flex-col min-h-screen mx-auto max-w-2xl px-4 pt-8 pb-16">
-        {/* Forms Code */}
         <p className="text-center font-bold text-3xl mb-8">
           Create your account
         </p>
         <div id="forms-wrapper" className="bg-white p-8">
           <form onSubmit={formik?.handleSubmit}>
-            {/* Create a grid layout with two columns and gap between them */}
             <div className="grid grid-cols-2 gap-5 aspect-auto">
               <div className="col-span-2">
                 <Label>Username</Label>
-                {/* Input field for entering a username */}
                 <Input
                   type="text"
                   name="username"
@@ -354,4 +344,4 @@ const Index: FC<IndexProps> = ({}) => {
   )
 }
 
-export default Index // Export the 'index' component as the default export
+export default Index

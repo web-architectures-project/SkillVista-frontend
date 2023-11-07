@@ -48,7 +48,7 @@ const Header = () => {
   }
 
   return (
-    <header className="flex items-center justify-between flex-wrap py-4 px-6 sticky top-0 ">
+    <header className="flex items-center justify-between flex-wrap py-4 px-6 sticky top-0 bg-white">
       <div className="flex items-center flex-shrink-0  mr-6">
         <Link
           href="/user-dashboard"
@@ -58,7 +58,7 @@ const Header = () => {
         </Link>
       </div>
       <div>
-        <div className="flex items-center w-auto lg:hidden">
+        <div className="flex items-center w-auto md:hidden">
           <button
             type="button"
             className="flex items-center px-3 py-2 border rounded fill-mainblue"
@@ -114,7 +114,7 @@ const Header = () => {
       </div>
 
       {toggle && (
-        <div className="md:flex lg:items-center md:w-auto w-full block items-center">
+        <div className="lg:flex lg:items-center lg:w-auto w-full block items-center">
           <div className="lg:flex-grow text-end">
             <Link
               href="/provider-registration"

@@ -1,20 +1,15 @@
-// Import the necessary dependencies and components
-import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/user-dashboard/DataTable'
 import FullScreenSearchBar from '@/components/user-dashboard/FullScreenSearchBar'
 import { columns } from '@/components/user-dashboard/columns'
 import { DummyData } from '@/lib/utils/UserDashboardData'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { FC, useContext, useEffect, useState } from 'react'
-import Data from '../../lib/utils/data/fake-service-data.json'
 import { Modal } from '@/components/ui/modal'
 import { useRouter } from 'next/router'
 import { AuthContext } from '@/context/auth-context'
 import { getCookies, setCookie } from 'cookies-next'
+import { useQuery } from '@tanstack/react-query'
 
-// Define the interface for the props (currently empty)
 interface IndexProps {
   consent: boolean
 }
@@ -24,7 +19,6 @@ interface ServerSideProps {
   req: NextApiRequest
 }
 
-// Create a functional component named Index, which receives no props ({})
 const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   const [cookieModal, setCookieModal] = useState(false)
 
@@ -45,7 +39,6 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
     setCookieModal(false)
   }
 
-  // Initialize state to manage the search query
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
   const router = useRouter()
