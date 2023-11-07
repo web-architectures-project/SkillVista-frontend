@@ -7,7 +7,7 @@ import { TextArea } from '@/components/ui/textArea'
 import { useFormik } from 'formik' // Importing useFormik hook for form handling
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { FC, useEffect } from 'react' // Importing FC (Functional Component) type from React
+import { FC, useEffect, useRef, useState } from 'react' // Importing FC (Functional Component) type from React
 import * as Yup from 'yup' // Import Yup for form validation
 
 // Define the props interface for the 'index' component
@@ -19,31 +19,22 @@ const Index: FC<IndexProps> = ({}) => {
   const approved = true
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Required'),
-    email: Yup.string().email('Invalid email').required('Required'),
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters long')
-      .required('Password is required'),
-    repassword: Yup.string().oneOf(
-      [Yup.ref('password')],
-      'Passwords dont match',
-    ),
+    title: Yup.string().required(),
+    description: Yup.string().required(),
+    price: Yup.number().required(),
+    availability: Yup.string().required(),
   })
 
-  // Initialize Formik for form management
   const formik = useFormik({
     initialValues: {
-      username: '', // Initial value for the 'username' field
-      email: '',
-      password: '',
-      repassword: '',
+      title: '',
+      description: '',
+      price: 0,
+      availability: '',
     },
-    validationSchema: RegistrationSchema, // Apply the Yup schema for validation
+    validationSchema: RegistrationSchema,
     onSubmit: () => {
-      console.log(formik)
+      console.log(formik.values)
       // console.log(formik)
       // apiRequest({
       //   method: 'POST',
@@ -67,7 +58,25 @@ const Index: FC<IndexProps> = ({}) => {
     },
   })
 
-  useEffect(() => {}, [formik.values])
+  const [profileImg, setProfileImg] = useState<any>()
+  const [changedImage, setChangedImage] = useState()
+  const hiddenFileInput = useRef<any>(null)
+  const handleClick = () => {
+    hiddenFileInput.current.click()
+  }
+
+  const handleChange = (event: any) => {
+    const fileUploaded = event.target.files[0]
+
+    setProfileImg(fileUploaded)
+
+    const fileReader = new FileReader()
+    fileReader.addEventListener('load', () => {
+      setChangedImage(fileReader?.result)
+    })
+
+    fileReader.readAsDataURL(fileUploaded)
+  }
 
   return (
     // Render the main content within a grid layout
@@ -93,7 +102,7 @@ const Index: FC<IndexProps> = ({}) => {
           <form onSubmit={formik?.handleSubmit}>
             <div className="pb-3 flex justify-center">
               <Image
-                src={'/upload.png'}
+                src={changedImage ? changedImage : '/upload.png'}
                 width={180}
                 height={180}
                 alt="Picture of the author"
@@ -101,25 +110,25 @@ const Index: FC<IndexProps> = ({}) => {
             </div>
             <div className="pb-5 flex justify-center">
               <Button
-                // onClick={handleClick}
+                onClick={handleClick}
                 className="bg-mainblue hover:bg-slate-300"
               >
                 Upload a file
               </Button>
               <input
                 type="file"
-                // onChange={handleChange}
-                // ref={hiddenFileInput}
+                onChange={handleChange}
+                ref={hiddenFileInput}
                 style={{ display: 'none' }}
               />
             </div>
             <div className="pb-3">
               <Label>Title</Label>
               <Input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formik.values.password}
+                type="text"
+                name="title"
+                placeholder="title"
+                value={formik.values.title}
                 onChange={formik.handleChange}
                 className="form-input"
               />
@@ -128,8 +137,10 @@ const Index: FC<IndexProps> = ({}) => {
               <Label>Desciprtion</Label>
               <TextArea
                 rows="5"
+                type="text"
+                name="description"
                 placeholder="Tell us about yourservice"
-                value={formik.values.email}
+                value={formik.values.description}
                 onChange={formik.handleChange}
               />
             </div>
@@ -141,12 +152,23 @@ const Index: FC<IndexProps> = ({}) => {
                   type="number"
                   name="price"
                   placeholder="Price"
-                  value={formik.values.password}
+                  value={formik.values.price}
                   onChange={formik.handleChange}
                   className="form-input w-1/3"
                 />
                 <div className="ml-3">€</div>
               </div>
+            </div>
+            <div className="pb-3">
+              <Label>Availability</Label>
+              <Input
+                type="text"
+                name="availability"
+                placeholder=""
+                value={formik.values.availability}
+                onChange={formik.handleChange}
+                className="form-input"
+              />
             </div>
             <div className="flex justify-end">
               <Button type="submit" className="bg-mainblue hover:bg-slate-300">
