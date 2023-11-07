@@ -1,41 +1,40 @@
 // src/context/auth-context.tsx
-import React, { createContext, useState, ReactNode } from "react";
-import { useRouter } from "next/router";
+import React, { createContext, useState, ReactNode } from 'react'
 
 interface AuthState {
-  token: string;
+  token: string
 }
 
 interface AuthContextType {
-  authState: AuthState;
-  setAuthState: (userAuthInfo: { data: string }) => void;
-  isUserAuthenticated: () => boolean;
+  authState: AuthState
+  setAuthState: (userAuthInfo: { data: string }) => void
+  isUserAuthenticated: () => boolean
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const { Provider } = AuthContext;
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const { Provider } = AuthContext
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({
-    token: "",
-  });
+    token: '',
+  })
 
   const setUserAuthInfo = ({ data }: { data: string }) => {
-    localStorage.setItem("token", data);
+    localStorage.setItem('token', data)
 
     setAuthState({
       token: data,
-    });
-  };
+    })
+  }
 
   // checks if the user is authenticated or not
   const isUserAuthenticated = () => {
-    return !!authState.token;
-  };
+    return !!authState.token
+  }
 
   return (
     <Provider
@@ -47,7 +46,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     >
       {children}
     </Provider>
-  );
-};
+  )
+}
 
-export { AuthContext, AuthProvider };
+export { AuthContext, AuthProvider }

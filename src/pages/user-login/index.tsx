@@ -18,12 +18,6 @@ import {
 } from '@/store/userSlice'
 
 interface indexProps {}
-interface handleTokenProps {
-  token: string
-}
-interface handleSessionProps {
-  token: string
-}
 
 const Index: FC<indexProps> = ({}) => {
   const router = useRouter()
