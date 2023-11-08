@@ -62,9 +62,9 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   }, [fetchedData, query])
 
   // useEffect to check user authentication and redirect if not authenticated
-  useEffect(() => {
-    !authContext?.isUserAuthenticated && router.push('/user-login')
-  }, [authContext?.isUserAuthenticated, router])
+  // useEffect(() => {
+  //   !authContext?.isUserAuthenticated && router.push('/user-login')
+  // }, [authContext?.isUserAuthenticated, router])
 
   return (
     // Main container for the component
@@ -82,7 +82,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
         />
       )}
 
-      <div className="relative h-screen">
+      {/* <div className="relative h-screen">
         <div>
           <FullScreenSearchBar
             queryData={fetchedData}
@@ -98,7 +98,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
             queryData={fetchedData}
           />
         </div>
-      </div>
+      </div> */}
     </main>
   )
 }
