@@ -43,7 +43,7 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
             <Input
               className={`px-5 ${
                 queryData ? 'scale-75' : ''
-              }  rounded-full transition-all py-10 text-xl sm:text-3xl duration-500 hover:shadow-md`}
+              }  rounded-full transition-all sm:py-10 py-6 text-xl sm:text-3xl duration-500 hover:shadow-md`}
               type="text"
               placeholder="Search for the service here"
               value={query}

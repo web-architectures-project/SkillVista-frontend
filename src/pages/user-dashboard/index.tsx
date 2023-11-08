@@ -24,15 +24,17 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 
   /* Cookie-consent check & Modal */
   useEffect(() => {
-    setCookieModal(!consent)
-  }, [consent])
+    if (JSON.stringify(consent) === '{}') {
+      setCookieModal(true)
+    }
+  }, [])
 
   const rightFunc = () => {
     setCookieModal(false)
   }
 
-  const leftFunc = () => {
-    setCookie('cookie-consent', true, {
+  const leftFunc = async () => {
+    await setCookie('consent', true, {
       //1 year
       expires: new Date(Number(new Date()) + 315360000000),
     })
@@ -56,14 +58,13 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   }
 
   useEffect(() => {
-    console.log(fetchedData)
     if (query === '') setFetchedData('')
   }, [fetchedData, query])
 
   // useEffect to check user authentication and redirect if not authenticated
-  // useEffect(() => {
-  //   !authContext?.isUserAuthenticated && router.push("/user-login");
-  // }, [authContext?.isUserAuthenticated, router]);
+  useEffect(() => {
+    !authContext?.isUserAuthenticated && router.push('/user-login')
+  }, [authContext?.isUserAuthenticated, router])
 
   return (
     // Main container for the component
@@ -83,7 +84,6 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 
       <div className="relative h-screen">
         <div>
-          {/* Render the FullScreenSearchBar component and pass the query state and setQuery function as props */}
           <FullScreenSearchBar
             queryData={fetchedData}
             query={query}
@@ -91,7 +91,6 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
             fetchDataOnEnter={fetchDataOnEnter}
           />
 
-          {/* Render the DataTable component, passing columns, data, and the search query as props */}
           <DataTable
             columns={columns}
             data={DummyData}
@@ -108,11 +107,8 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 export default Index
 
 export async function getServerSideProps({ req, res }: ServerSideProps) {
-  const consent = getCookies('cookie-consent', { req, res }) || false
+  const data = getCookies({ req, res })
+  const consent = data['consent'] || {}
 
-  return {
-    props: {
-      consent,
-    },
-  }
+  return { props: { consent } }
 }

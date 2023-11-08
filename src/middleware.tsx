@@ -11,6 +11,7 @@ export const middleware = async (req: NextRequest, res: NextResponse) => {
     password: 'SkillvistaSkillvistaSkillvistaSkillvistaSkillvista',
     cookieName: 'Skillvista-cookie',
   })
+
   if (!token && session.token) {
     customAxios.interceptors.request.use(
       async (config) => {

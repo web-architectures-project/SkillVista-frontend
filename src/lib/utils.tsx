@@ -19,7 +19,7 @@ export function cn(...inputs: ClassValue[]) {
  * False : save in session */
 export const handleToken = async ({ token }: handleTokenProps) => {
   const consent = getCookie('cookie-consent')
-  if (consent) {
+  if (!consent) {
     //4 hours
     await setCookie('cookie-token', token, {
       expires: new Date(Number(new Date()) + 14400000),

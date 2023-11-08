@@ -72,7 +72,6 @@ const Index: FC<IndexProps> = ({}) => {
           address: formik.values.address,
           city: formik.values.city,
           county: formik.values.county,
-
           Eircode: formik.values.eircode,
         },
       }).then((res) => {
@@ -119,8 +118,8 @@ const Index: FC<IndexProps> = ({}) => {
         </p>
         <div id="forms-wrapper" className="bg-white p-8">
           <form onSubmit={formik?.handleSubmit}>
-            <div className="grid grid-cols-2 gap-5 aspect-auto">
-              <div className="col-span-2">
+            <div className="sm:grid sm:grid-cols-2 gap-5 aspect-auto">
+              <div className="sm:col-span-2 ">
                 <Label>Username</Label>
                 <Input
                   type="text"
@@ -138,7 +137,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div>
+              <div className="mt-3 sm:mt-0">
                 <Label>First name</Label>
                 <Input
                   type="text"
@@ -156,7 +155,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div>
+              <div className="mt-3 sm:mt-0">
                 <Label>Last name</Label>
                 <Input
                   type="text"
@@ -174,7 +173,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 mt-3 sm:mt-0">
                 <Label>Phone number</Label>
                 <Input
                   type="number"
@@ -192,7 +191,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 mt-3 sm:mt-0">
                 <Label>Email</Label>
                 <Input
                   type="email"
@@ -210,7 +209,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div>
+              <div className="mt-3 sm:mt-0">
                 <Label>City</Label>
                 <Input
                   type="text"
@@ -228,7 +227,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div>
+              <div className="mt-3 sm:mt-0">
                 <Label>County</Label>
                 <Input
                   type="text"
@@ -246,7 +245,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 mt-3 sm:mt-0">
                 <Label>Eircode</Label>
                 <Input
                   type="text"
@@ -264,7 +263,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 mt-3 sm:mt-0">
                 <Label>Address</Label>
                 <Input
                   type="text"
@@ -282,7 +281,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div>
+              <div className="mt-3 sm:mt-0">
                 <Label>Password</Label>
                 <Input
                   type="password"
@@ -300,7 +299,7 @@ const Index: FC<IndexProps> = ({}) => {
                   ''
                 )}
               </div>
-              <div>
+              <div className="mt-3 sm:mt-0">
                 <Label>Re-Enter password</Label>
                 <Input
                   type="password"
