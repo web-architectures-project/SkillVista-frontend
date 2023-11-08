@@ -1,20 +1,15 @@
-// Import the necessary dependencies and components
-import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/user-dashboard/DataTable'
 import FullScreenSearchBar from '@/components/user-dashboard/FullScreenSearchBar'
 import { columns } from '@/components/user-dashboard/columns'
 import { DummyData } from '@/lib/utils/UserDashboardData'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { FC, useContext, useEffect, useState } from 'react'
-import Data from '../../lib/utils/data/fake-service-data.json'
 import { Modal } from '@/components/ui/modal'
 import { useRouter } from 'next/router'
 import { AuthContext } from '@/context/auth-context'
 import { getCookies, setCookie } from 'cookies-next'
+import { useQuery } from '@tanstack/react-query'
 
-// Define the interface for the props (currently empty)
 interface IndexProps {
   consent: boolean
 }
@@ -24,28 +19,28 @@ interface ServerSideProps {
   req: NextApiRequest
 }
 
-// Create a functional component named Index, which receives no props ({})
 const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   const [cookieModal, setCookieModal] = useState(false)
 
   /* Cookie-consent check & Modal */
   useEffect(() => {
-    setCookieModal(!consent)
-  }, [consent])
+    if (JSON.stringify(consent) === '{}') {
+      setCookieModal(true)
+    }
+  }, [])
 
   const rightFunc = () => {
     setCookieModal(false)
   }
 
-  const leftFunc = () => {
-    setCookie('cookie-consent', true, {
+  const leftFunc = async () => {
+    await setCookie('consent', true, {
       //1 year
       expires: new Date(Number(new Date()) + 315360000000),
     })
     setCookieModal(false)
   }
 
-  // Initialize state to manage the search query
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
   const router = useRouter()
@@ -63,14 +58,13 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   }
 
   useEffect(() => {
-    console.log(fetchedData)
     if (query === '') setFetchedData('')
   }, [fetchedData, query])
 
   // useEffect to check user authentication and redirect if not authenticated
   // useEffect(() => {
-  //   !authContext?.isUserAuthenticated && router.push("/user-login");
-  // }, [authContext?.isUserAuthenticated, router]);
+  //   !authContext?.isUserAuthenticated && router.push('/user-login')
+  // }, [authContext?.isUserAuthenticated, router])
 
   return (
     // Main container for the component
@@ -88,9 +82,8 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
         />
       )}
 
-      <div className="relative h-screen">
+      {/* <div className="relative h-screen">
         <div>
-          {/* Render the FullScreenSearchBar component and pass the query state and setQuery function as props */}
           <FullScreenSearchBar
             queryData={fetchedData}
             query={query}
@@ -98,7 +91,6 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
             fetchDataOnEnter={fetchDataOnEnter}
           />
 
-          {/* Render the DataTable component, passing columns, data, and the search query as props */}
           <DataTable
             columns={columns}
             data={DummyData}
@@ -106,7 +98,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
             queryData={fetchedData}
           />
         </div>
-      </div>
+      </div> */}
     </main>
   )
 }
@@ -115,11 +107,8 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 export default Index
 
 export async function getServerSideProps({ req, res }: ServerSideProps) {
-  const consent = getCookies('cookie-consent', { req, res }) || false
+  const data = getCookies({ req, res })
+  const consent = data['consent'] || {}
 
-  return {
-    props: {
-      consent,
-    },
-  }
+  return { props: { consent } }
 }

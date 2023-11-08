@@ -2,27 +2,21 @@ import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  selectProfileId,
-  selectUserId,
-  selectUserState,
-} from '@/store/userSlice'
+import { selectProfileId, selectUserState } from '@/store/userSlice'
 import { useFormik } from 'formik'
 import Image from 'next/image'
 import { FC, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import * as Yup from 'yup'
 
 interface indexProps {}
 
 const Index: FC<indexProps> = ({}) => {
-  const dispatch = useDispatch()
   const userState = useSelector(selectUserState)
-  const userId = useSelector(selectUserId)
   const profileId = useSelector(selectProfileId)
   const hiddenFileInput = useRef<any>(null)
   const [profileImg, setProfileImg] = useState<any>()
-  const [changedImage, setChangedImage] = useState()
+  const [changedImage, setChangedImage] = useState<any>()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -68,13 +62,13 @@ const Index: FC<indexProps> = ({}) => {
                 },
               },
             }).then((res) => {
-              if (res.status === 200) {
-                // alert('saved successfully!')
+              if (res.message === 200) {
+                alert('saved successfully!')
               }
             })
           } else {
-            if (res.status === 200) {
-              // alert('saved successfully!')
+            if (res.message === 200) {
+              alert('saved successfully!')
             }
           }
         }
@@ -88,7 +82,6 @@ const Index: FC<indexProps> = ({}) => {
 
   const handleChange = (event: any) => {
     const fileUploaded = event.target.files[0]
-
     setProfileImg(fileUploaded)
 
     const fileReader = new FileReader()
@@ -102,36 +95,36 @@ const Index: FC<indexProps> = ({}) => {
     <div className="flex flex-col min-h-screen mx-auto max-w-2xl px-4 pt-8 pb-16">
       <p className="text-center font-bold text-3xl mb-8">Profile</p>
 
+      <div className="pb-3 flex justify-center">
+        <Image
+          src={
+            changedImage
+              ? changedImage
+              : userState.profile_picture_url
+              ? userState.profile_picture_url
+              : '/user.png'
+          }
+          width={180}
+          height={180}
+          alt="Picture of the author"
+        />
+      </div>
+      <div className="pb-5 flex justify-center">
+        <Button
+          onClick={() => handleClick()}
+          className="bg-mainblue hover:bg-slate-300"
+        >
+          Upload a file
+        </Button>
+        <input
+          type="file"
+          onChange={handleChange}
+          ref={hiddenFileInput}
+          style={{ display: 'none' }}
+        />
+      </div>
       <form onSubmit={formik?.handleSubmit}>
         <div className=" p-8">
-          <div className="pb-3 flex justify-center">
-            <Image
-              src={
-                changedImage
-                  ? changedImage
-                  : userState.profile_picture_url
-                  ? userState.profile_picture_url
-                  : '/user.png'
-              }
-              width={180}
-              height={180}
-              alt="Picture of the author"
-            />
-          </div>
-          <div className="pb-5 flex justify-center">
-            <Button
-              onClick={handleClick}
-              className="bg-mainblue hover:bg-slate-300"
-            >
-              Upload a file
-            </Button>
-            <input
-              type="file"
-              onChange={handleChange}
-              ref={hiddenFileInput}
-              style={{ display: 'none' }}
-            />
-          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="pb-3">
               <Label>First name</Label>

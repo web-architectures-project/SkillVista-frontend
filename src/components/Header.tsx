@@ -48,8 +48,8 @@ const Header = () => {
   }
 
   return (
-    <header className="flex items-center justify-between flex-wrap py-4 px-6 sticky top-0 ">
-      <div className="flex items-center flex-shrink-0  mr-6">
+    <header className="flex items-center justify-between flex-wrap py-4 px-6 sticky top-0 bg-white z-50">
+      <div className="flex items-center flex-shrink-0 mr-6">
         <Link
           href="/user-dashboard"
           className="font-semibold text-2xl tracking-tight text-mainblue"
@@ -58,7 +58,7 @@ const Header = () => {
         </Link>
       </div>
       <div>
-        <div className="flex items-center w-auto lg:hidden">
+        <div className="flex items-center w-auto md:hidden">
           <button
             type="button"
             className="flex items-center px-3 py-2 border rounded fill-mainblue"
@@ -78,33 +78,33 @@ const Header = () => {
       </div>
 
       <div className="items-center w-auto hidden md:flex">
-        <div className="lg:flex-grow lg:content-center">
-          <Link href="/provider-registration" className="inline-block  mr-4">
+        <div className="md:flex-grow md:content-center">
+          <Link href="/provider-registration" className="inline-block mr-4">
             Become a Provider
           </Link>
           {authState ? (
             <>
               <Link
                 href="/user-profile"
-                className="lg:inline-block mr-4  px-2 py-1"
+                className="md:inline-block mr-4 px-2 py-1"
               >
                 <p>Profile</p>
               </Link>
               <div
                 onClick={() => handleLogout()}
-                className="lg:inline-block mr-4 font-bold  px-2 py-1"
+                className="md:inline-block mr-4 font-bold  px-2 py-1"
               >
                 <p>Logout</p>
               </div>
             </>
           ) : (
             <>
-              <Link href="/user-login" className=" inline-block  mr-4">
+              <Link href="/user-login" className="inline-block  mr-4">
                 Login
               </Link>
               <Link
                 href="/user-registration"
-                className=" lg:inline-block mr-4 font-bold border border-mainblue rounded px-2 py-1"
+                className=" md:inline-block mr-4 font-bold border border-mainblue rounded px-2 py-1"
               >
                 Join
               </Link>
@@ -115,10 +115,10 @@ const Header = () => {
 
       {toggle && (
         <div className="md:flex lg:items-center md:w-auto w-full block items-center">
-          <div className="lg:flex-grow text-end">
+          <div className="md:flex-grow text-end">
             <Link
               href="/provider-registration"
-              className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+              className="block mt-4 md:inline-block lg:mt-0 mr-4"
             >
               Become a Provider
             </Link>
@@ -126,13 +126,13 @@ const Header = () => {
               <>
                 <Link
                   href="/user-profile"
-                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                  className="block mt-4 md:inline-block md:mt-0 mr-4"
                 >
                   <p>Profile</p>
                 </Link>
                 <div
                   onClick={() => handleLogout()}
-                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                  className="block mt-4 md:inline-block md:mt-0 mr-4"
                 >
                   Logout
                 </div>
@@ -141,13 +141,13 @@ const Header = () => {
               <>
                 <Link
                   href="/user-login"
-                  className="block mt-4 lg:inline-block lg:mt-0 mr-4"
+                  className="block mt-4 md:inline-block md:mt-0 mr-4"
                 >
                   Login
                 </Link>
                 <Link
                   href="/user-registration"
-                  className="block mt-4 lg:inline-block lg:mt-0 mr-4 "
+                  className="block mt-4 md:inline-block md:mt-0 mr-4 "
                 >
                   Join
                 </Link>
