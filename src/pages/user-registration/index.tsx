@@ -2,7 +2,7 @@ import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { handleToken } from '@/lib/utils'
+import { getUserProfile, handleToken } from '@/lib/utils'
 import { setAuthState } from '@/store/authSlice'
 import { useFormik } from 'formik'
 import Link from 'next/link'
@@ -10,6 +10,12 @@ import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
+import {
+  setProfileId,
+  setUserId,
+  setUserName,
+  setUserState,
+} from '@/store/userSlice'
 
 interface IndexProps {}
 const Index: FC<IndexProps> = ({}) => {
@@ -96,6 +102,12 @@ const Index: FC<IndexProps> = ({}) => {
       if (res?.status === 200) {
         handleToken({ token: res.message.accessToken }).then(() => {
           dispatch(setAuthState(true))
+          getUserProfile({ token: res.message.accessToken }).then((res) => {
+            dispatch(setUserState(res?.profile))
+            dispatch(setUserName(res?.username))
+            dispatch(setProfileId(res?.profileId))
+            dispatch(setUserId(res?.userId))
+          })
           router.push('/user-dashboard')
         })
       } else {
