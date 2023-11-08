@@ -19,6 +19,7 @@ customAxios.interceptors.request.use(
     return config
   },
   (error) => {
+    console.log(error)
     return Promise.reject(error)
   },
 )
@@ -42,7 +43,6 @@ export async function apiRequest({
     }
     return { status: res?.status || res?.data?.status, message: res?.data }
   } catch (error) {
-    console.log(error)
     return { status: error?.response.status, message: error?.message }
   }
 }

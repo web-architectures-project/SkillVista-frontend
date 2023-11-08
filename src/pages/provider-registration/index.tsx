@@ -82,7 +82,7 @@ const Index: FC<IndexProps> = ({}) => {
     // Render the main content within a grid layout
     <div className="lg:flex lg:flex-row h-screen w-full">
       <div className="hidden lg:flex lg:flex-col lg:justify-center lg:w-4/12 bg-gradient-to-bl from-blue-500 via-sky-400 to-blue-500 text-center ">
-        <div className="text-white text-3xl font-semibold tracking-wide ">
+        <div className="text-white text-3xl font-semibold tracking-wide">
           Let's Get
         </div>
         <div className="text-white text-6xl font-bold tracking-wide ">
@@ -95,7 +95,7 @@ const Index: FC<IndexProps> = ({}) => {
         </div>
       </div>
       <div className="flex flex-col lg:w-8/12 w-full py-5 px-8">
-        <div className="text-center text-gray-500 text-2xl font-semibold border-b border-gray-200 pb-3">
+        <div className="text-center text-gray-500 sm:text-2xl text-xl font-semibold border-b border-gray-200 pb-3">
           REGISTER WITH PERSONAL INFO AND PROFESSIONAL INFO
         </div>
         <div className="pt-10">
