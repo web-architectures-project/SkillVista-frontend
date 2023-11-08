@@ -125,7 +125,7 @@ const Index: FC<indexProps> = ({}) => {
       </div>
       <form onSubmit={formik?.handleSubmit}>
         <div className=" p-8">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="md:grid md:grid-cols-2 gap-3">
             <div className="pb-3">
               <Label>First name</Label>
               <Input
