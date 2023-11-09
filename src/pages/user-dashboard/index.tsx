@@ -82,7 +82,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
         />
       )}
 
-      {/* <div className="relative h-screen">
+      <div className="relative h-screen">
         <div>
           <FullScreenSearchBar
             queryData={fetchedData}
@@ -91,14 +91,14 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
             fetchDataOnEnter={fetchDataOnEnter}
           />
 
-          <DataTable
+          {/* <DataTable
             columns={columns}
             data={DummyData}
             query={query}
             queryData={fetchedData}
-          />
+          /> */}
         </div>
-      </div> */}
+      </div>
     </main>
   )
 }

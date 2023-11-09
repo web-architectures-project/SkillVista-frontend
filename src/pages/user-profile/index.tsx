@@ -2,11 +2,19 @@ import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { selectProfileId, selectUserState } from '@/store/userSlice'
+import { setAuthState } from '@/store/authSlice'
+import {
+  selectProfileId,
+  selectUserId,
+  selectUserState,
+} from '@/store/userSlice'
+import { deleteCookie } from 'cookies-next'
+
 import { useFormik } from 'formik'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { FC, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import * as Yup from 'yup'
 
 interface indexProps {}
@@ -17,6 +25,9 @@ const Index: FC<indexProps> = ({}) => {
   const hiddenFileInput = useRef<any>(null)
   const [profileImg, setProfileImg] = useState<any>()
   const [changedImage, setChangedImage] = useState<any>()
+  const userId = useSelector(selectUserId)
+  const router = useRouter()
+  const dispatch = useDispatch()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -218,6 +229,21 @@ const Index: FC<indexProps> = ({}) => {
           <div className="flex justify-end">
             <Button type="submit" className="bg-mainblue hover:bg-slate-300">
               Save
+            </Button>
+            <Button
+              onClick={() => {
+                apiRequest({
+                  method: 'DELETE',
+                  path: `users/${userId}`,
+                }).then((res) => {
+                  dispatch(setAuthState(false))
+                  deleteCookie('cookie-token')
+                  router.push('/user-dashboard')
+                })
+              }}
+              className="bg-mainblue hover:bg-slate-300 ml-5"
+            >
+              Delete Account
             </Button>
           </div>
         </div>
