@@ -29,7 +29,7 @@ const Header = () => {
         dispatch(setUserId(res?.userId))
       })
     }
-  }, [])
+  }, [dispatch])
 
   const handleToggle = () => {
     setToggle((toggle) => !toggle)
