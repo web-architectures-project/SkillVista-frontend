@@ -83,7 +83,7 @@ const Index: FC<IndexProps> = ({}) => {
     <div className="lg:flex lg:flex-row h-screen w-full">
       <div className="hidden lg:flex lg:flex-col lg:justify-center lg:w-4/12 bg-gradient-to-bl from-blue-500 via-sky-400 to-blue-500 text-center ">
         <div className="text-white text-3xl font-semibold tracking-wide">
-          Let's Get
+          Let&apos;s Get
         </div>
         <div className="text-white text-6xl font-bold tracking-wide ">
           Started
