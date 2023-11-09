@@ -20,7 +20,7 @@ import {
 interface IndexProps {}
 const Index: FC<IndexProps> = ({}) => {
   const router = useRouter()
-  const [error, setError] = useState<string>()
+  const [error, setError] = useState<string[] | string>()
   const dispatch = useDispatch()
   const RegistrationSchema = Yup.object().shape({
     username: Yup.string()
@@ -81,10 +81,11 @@ const Index: FC<IndexProps> = ({}) => {
           Eircode: formik.values.eircode,
         },
       }).then((res) => {
+        console.log(res)
         if (res?.status === 201) {
           handleLogin()
         } else {
-          setError(res?.message?.message)
+          setError(res?.message)
         }
       })
     },
@@ -120,6 +121,10 @@ const Index: FC<IndexProps> = ({}) => {
     setTimeout(() => {
       setError('')
     }, 5000)
+  }, [error])
+
+  useEffect(() => {
+    console.log(error)
   }, [error])
 
   return (

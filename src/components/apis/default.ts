@@ -43,6 +43,10 @@ export async function apiRequest({
     }
     return { status: res?.status || res?.data?.status, message: res?.data }
   } catch (error) {
-    return { status: error?.response?.status, message: error?.message }
+    console.log(error?.response?.data?.message)
+    return {
+      status: error?.response?.status,
+      message: error?.response?.data?.message,
+    }
   }
 }
