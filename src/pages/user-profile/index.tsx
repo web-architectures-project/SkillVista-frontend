@@ -1,10 +1,10 @@
-import { apiRequest } from "@/components/apis/default";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { selectAuthState, setAuthState } from "@/store/authSlice";
-import { selectProfileId, selectUserState } from "@/store/userSlice";
-import { deleteCookie } from "cookies-next";
+import { apiRequest } from '@/components/apis/default'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { selectAuthState, setAuthState } from '@/store/authSlice'
+import { selectProfileId, selectUserState } from '@/store/userSlice'
+import { deleteCookie } from 'cookies-next'
 import {
   Dialog,
   DialogContent,
@@ -13,27 +13,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useFormik } from "formik";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import React, { FC, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import * as Yup from "yup";
+} from '@/components/ui/dialog'
+import { useFormik } from 'formik'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import React, { FC, useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import * as Yup from 'yup'
 
 interface indexProps {}
 
 const Index: FC<indexProps> = ({}) => {
-  const [formEditable, setFormEditable] = useState(true);
-  const [isSame, setIsSame] = useState(false);
-  const [inputConfirmationText, setInputConfirmationText] = useState("");
+  const [formEditable, setFormEditable] = useState(true)
+  const [isSame, setIsSame] = useState(false)
+  const [inputConfirmationText, setInputConfirmationText] = useState('')
 
-  const userState = useSelector(selectUserState);
-  const profileId = useSelector(selectProfileId);
-  const hiddenFileInput = useRef<any>(null);
-  const [profileImg, setProfileImg] = useState<any>();
-  const [changedImage, setChangedImage] = useState<any>();
-  const authState = useSelector(selectAuthState);
+  const userState = useSelector(selectUserState)
+  const profileId = useSelector(selectProfileId)
+  const hiddenFileInput = useRef<any>(null)
+  const [profileImg, setProfileImg] = useState<any>()
+  const [changedImage, setChangedImage] = useState<any>()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -45,10 +44,10 @@ const Index: FC<indexProps> = ({}) => {
     Eircode: Yup.string().required(),
     profile_picture_url: Yup.string(),
     bio: Yup.string(),
-  });
+  })
 
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const dispatch = useDispatch()
+  const router = useRouter()
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -64,97 +63,96 @@ const Index: FC<indexProps> = ({}) => {
       bio: userState.bio,
     },
     validationSchema: ProfileSchema,
-    onSubmit: () => {
-      apiRequest({
-        method: "PUT",
-        path: `profiles/${profileId}`,
-        body: formik.values,
-      }).then((res) => {
-        if (res.status === 200) {
-          if (profileImg) {
-            apiRequest({
-              method: "POST",
-              path: `profiles/image/${profileId}`,
-              body: { file: profileImg },
-              header: {
-                headers: {
-                  "content-type": "multipart/form-data",
-                },
+    onSubmit: () => {},
+  })
+
+  const saveProfile = () => {
+    apiRequest({
+      method: 'PUT',
+      path: `profiles/${profileId}`,
+      body: formik.values,
+    }).then((res) => {
+      if (res.status === 200) {
+        if (profileImg) {
+          apiRequest({
+            method: 'POST',
+            path: `profiles/image/${profileId}`,
+            body: { file: profileImg },
+            header: {
+              headers: {
+                'content-type': 'multipart/form-data',
               },
-            }).then((res) => {
-              if (res.message === 200) {
-                alert("saved successfully!");
-              }
-            });
-          } else {
+            },
+          }).then((res) => {
             if (res.message === 200) {
-              alert("saved successfully!");
+              alert('saved successfully!')
             }
+          })
+        } else {
+          if (res.message === 200) {
+            alert('saved successfully!')
           }
         }
-      });
-    },
-  });
+      }
+    })
+  }
 
   const handleClick = () => {
-    hiddenFileInput.current.click();
-  };
+    hiddenFileInput.current.click()
+  }
 
   const handleEditability = () => {
-    setFormEditable(!formEditable);
-  };
+    setFormEditable(!formEditable)
+  }
 
   const handleChange = (event: any) => {
-    const fileUploaded = event.target.files[0];
-    setProfileImg(fileUploaded);
+    const fileUploaded = event.target.files[0]
+    setProfileImg(fileUploaded)
 
-    const fileReader = new FileReader();
-    fileReader.addEventListener("load", () => {
-      setChangedImage(fileReader?.result);
-    });
+    const fileReader = new FileReader()
+    fileReader.addEventListener('load', () => {
+      setChangedImage(fileReader?.result)
+    })
 
-    fileReader.readAsDataURL(fileUploaded);
-  };
+    fileReader.readAsDataURL(fileUploaded)
+  }
 
   const handleLogout = () => {
-    dispatch(setAuthState(false));
-    deleteCookie("cookie-token");
+    dispatch(setAuthState(false))
+    deleteCookie('cookie-token')
     const options = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ token: null }),
-    };
-    fetch("/api/auth", options);
-  };
+    }
+    fetch('/api/auth', options)
+  }
 
   const handleDeleteProfile = async () => {
     try {
       await apiRequest({
-        method: "DELETE",
+        method: 'DELETE',
         path: `users/${profileId}`,
-      });
-      handleLogout();
-      router.push("user-login");
+      })
+      handleLogout()
+      dispatch(setAuthState(false))
+      deleteCookie('cookie-token')
+      router.push('user-login')
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   const handleDeleteInputConfirmation = (e: any) => {
-    setInputConfirmationText(e.target.value);
-  };
+    setInputConfirmationText(e.target.value)
+  }
 
   useEffect(() => {
-    if (inputConfirmationText === userState.first_name) setIsSame(true);
-    else setIsSame(false);
-  }, [inputConfirmationText, userState.first_name]);
-
-  useEffect(() => {
-    if (!authState) router.push("user-login");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authState]);
+    if (inputConfirmationText === userState.first_name) setIsSame(true)
+    else setIsSame(false)
+  }, [inputConfirmationText, userState.first_name])
 
   return (
     <div className="flex flex-col min-h-screen mx-auto max-w-2xl px-4 pt-8 pb-16">
@@ -167,7 +165,7 @@ const Index: FC<indexProps> = ({}) => {
               ? changedImage
               : userState.profile_picture_url
               ? userState.profile_picture_url
-              : "/user.png"
+              : '/user.png'
           }
           width={180}
           height={180}
@@ -185,10 +183,10 @@ const Index: FC<indexProps> = ({}) => {
           type="file"
           onChange={handleChange}
           ref={hiddenFileInput}
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
         />
       </div>
-      <form onSubmit={formik?.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <div className=" p-8">
           <div className="md:grid md:grid-cols-2 gap-3">
             <div className="pb-3">
@@ -289,7 +287,13 @@ const Index: FC<indexProps> = ({}) => {
             />
           </div>
           <div className="flex space-x-2 justify-end">
-            <Button type="submit" className="bg-mainblue hover:bg-slate-300">
+            <Button
+              type="submit"
+              className="bg-mainblue hover:bg-slate-300"
+              onClick={() => {
+                saveProfile()
+              }}
+            >
               Save
             </Button>
             <Button
@@ -305,7 +309,7 @@ const Index: FC<indexProps> = ({}) => {
                   type="button"
                   className="bg-mainblue hover:bg-slate-300"
                 >
-                  Delete Profile
+                  Delete Account
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
@@ -329,7 +333,11 @@ const Index: FC<indexProps> = ({}) => {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleDeleteProfile} disabled={!isSame}>
+                  <Button
+                    type="button"
+                    onClick={handleDeleteProfile}
+                    disabled={!isSame}
+                  >
                     Delete
                   </Button>
                 </DialogFooter>
@@ -339,7 +347,7 @@ const Index: FC<indexProps> = ({}) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index
