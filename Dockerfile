@@ -1,42 +1,28 @@
-# FROM node:alpine as BUILD_IMAGE
-
-# WORKDIR /app
-
-# COPY package.json ./
-
-# # install dependencies
-# RUN npm install
-# COPY . .
-
-# # build
-# RUN npm run build
-
-# # remove dev dependencies
-# RUN npm prune --production
-# FROM node:alpine
-# WORKDIR /app
-
-# # copy from build image
-# COPY --from=BUILD_IMAGE /app/package.json ./package.json
-# COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
-# COPY --from=BUILD_IMAGE /app/.next ./.next
-# COPY --from=BUILD_IMAGE /app/public ./public
-
-# EXPOSE 3000
-
-# CMD ["npm", "run", "start"]
-
-# Above build is not working, so I have to use the below build
-FROM node:alpine
+FROM node:alpine as BUILD_IMAGE
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json ./
 
+# install dependencies
 RUN npm install
-
 COPY . .
+
+# build
+RUN npm run build
+
+# remove dev dependencies
+RUN npm prune --production
+FROM node:alpine
+WORKDIR /app
+
+# copy from build image
+COPY --from=BUILD_IMAGE /app/package.json ./package.json
+COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
+COPY --from=BUILD_IMAGE /app/.next ./.next
+COPY --from=BUILD_IMAGE /app/public ./public
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
+
