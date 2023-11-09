@@ -86,12 +86,12 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
             fetchDataOnEnter={fetchDataOnEnter}
           />
 
-          <DataTable
+          {/* <DataTable
             columns={columns}
             data={DummyData}
             query={query}
             queryData={fetchedData}
-          />
+          /> */}
         </div>
       </div>
     </main>
