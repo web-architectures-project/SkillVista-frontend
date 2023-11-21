@@ -14,11 +14,11 @@ export const middleware = async (req: NextRequest, res: NextResponse) => {
 
   if (!token && session.token) {
     customAxios.interceptors.request.use(
-      async (config) => {
+      async config => {
         config.headers.Authorization = `Bearer ${session}`
         return config
       },
-      (error) => {
+      error => {
         return Promise.reject(error)
       },
     )

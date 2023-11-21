@@ -1,13 +1,6 @@
 // Import the necessary dependencies and components
-import React, {
-  FC,
-  useState,
-  Dispatch,
-  FunctionComponent,
-  FormEvent,
-} from 'react'
+import React, { FC, Dispatch } from 'react'
 import { Input } from '../ui/input'
-import { Button } from '../ui/button'
 
 // Define the interface for the FullScreenSearchBar component's props
 interface FullScreenSearchBarProps {
@@ -18,7 +11,7 @@ interface FullScreenSearchBarProps {
 }
 
 // Create a functional component named FullScreenSearchBar and provide the expected props
-const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
+export const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
   query,
   setQuery,
   fetchDataOnEnter,
@@ -33,9 +26,7 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
     <>
       <div
         className={`pt-10 w-full ${
-          queryData
-            ? 'translate-y-0'
-            : '2xl:translate-y-[200%] xl:translate-y-[175%]'
+          queryData ? 'translate-y-0' : '2xl:translate-y-[200%] xl:translate-y-[175%]'
         } transition duration-700`}
       >
         <div className={`w-full text-center`}>
@@ -55,5 +46,3 @@ const FullScreenSearchBar: FC<FullScreenSearchBarProps> = ({
     </>
   )
 }
-
-export default FullScreenSearchBar

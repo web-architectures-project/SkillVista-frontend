@@ -40,7 +40,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     <Provider
       value={{
         authState,
-        setAuthState: (userAuthInfo) => setUserAuthInfo(userAuthInfo),
+        setAuthState: userAuthInfo => setUserAuthInfo(userAuthInfo),
         isUserAuthenticated,
       }}
     >

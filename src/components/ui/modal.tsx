@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Dialog } from '@radix-ui/react-dialog'
-import { cn } from '@/lib/utils'
 
 export interface DialogProps {
   title: string
@@ -11,14 +9,7 @@ export interface DialogProps {
   leftFunc: () => void
 }
 
-const Modal = ({
-  rightButton,
-  leftButton,
-  content,
-  title,
-  rightFunc,
-  leftFunc,
-}: DialogProps) => {
+const Modal = ({ rightButton, leftButton, content, title, rightFunc, leftFunc }: DialogProps) => {
   return (
     <div
       className="min-w-screen h-screen animated fadeIn faster  fixed  left-0 top-0 flex justify-center items-center inset-0 z-50 outline-none focus:outline-none bg-no-repeat bg-center bg-cover"

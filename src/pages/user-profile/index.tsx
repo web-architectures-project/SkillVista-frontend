@@ -71,7 +71,7 @@ const Index: FC<indexProps> = ({}) => {
       method: 'PUT',
       path: `profiles/${profileId}`,
       body: formik.values,
-    }).then((res) => {
+    }).then(res => {
       if (res.status === 200) {
         if (profileImg) {
           apiRequest({
@@ -83,7 +83,7 @@ const Index: FC<indexProps> = ({}) => {
                 'content-type': 'multipart/form-data',
               },
             },
-          }).then((res) => {
+          }).then(res => {
             if (res.message === 200) {
               alert('saved successfully!')
             }
@@ -173,10 +173,7 @@ const Index: FC<indexProps> = ({}) => {
         />
       </div>
       <div className="pb-5 flex justify-center">
-        <Button
-          onClick={() => handleClick()}
-          className="bg-mainblue hover:bg-slate-300"
-        >
+        <Button onClick={() => handleClick()} className="bg-mainblue hover:bg-slate-300">
           Upload a file
         </Button>
         <input
@@ -305,10 +302,7 @@ const Index: FC<indexProps> = ({}) => {
             </Button>
             <Dialog>
               <DialogTrigger asChild>
-                <Button
-                  type="button"
-                  className="bg-mainblue hover:bg-slate-300"
-                >
+                <Button type="button" className="bg-mainblue hover:bg-slate-300">
                   Delete Account
                 </Button>
               </DialogTrigger>
@@ -316,8 +310,7 @@ const Index: FC<indexProps> = ({}) => {
                 <DialogHeader>
                   <DialogTitle>Are you sure?</DialogTitle>
                   <DialogDescription>
-                    Please write {userState?.first_name} in the input box to
-                    confirm deletion
+                    Please write {userState?.first_name} in the input box to confirm deletion
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -333,11 +326,7 @@ const Index: FC<indexProps> = ({}) => {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button
-                    type="button"
-                    onClick={handleDeleteProfile}
-                    disabled={!isSame}
-                  >
+                  <Button type="button" onClick={handleDeleteProfile} disabled={!isSame}>
                     Delete
                   </Button>
                 </DialogFooter>

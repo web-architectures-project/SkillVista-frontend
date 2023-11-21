@@ -42,7 +42,7 @@ export const setSession = async ({ token }: handleSessionProps) => {
     const response = await fetch('/api/auth', options)
     if (response.status !== 200) throw new Error("Can't login")
   } catch (err) {
-    new Error(err)
+    throw new Error(err as string)
   }
 }
 
@@ -53,6 +53,7 @@ export const getUserProfile = async ({ token }: handleTokenProps) => {
     path: `users/validate/${token}`,
     body: { token: token },
   })
+  if (res?.status !== 200) throw new Error('User not found')
 
   const userId = res.message?.userId
   const userRes = await apiRequest({
