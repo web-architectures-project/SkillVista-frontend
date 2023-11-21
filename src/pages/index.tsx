@@ -1,9 +1,5 @@
-interface HomeProps {
-  consent: string
-}
-
 /*Homepage : user-dashboard*/
-export default function Home({ consent }: HomeProps) {
+export function Home() {
   return (
     <>
       <main></main>

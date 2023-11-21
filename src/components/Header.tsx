@@ -3,15 +3,10 @@ import { useEffect, useState } from 'react'
 import { selectAuthState, setAuthState } from '@/store/authSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteCookie, getCookie } from 'cookies-next'
-import {
-  setUserName,
-  setUserState,
-  setProfileId,
-  setUserId,
-} from '@/store/userSlice'
+import { setUserName, setUserState, setProfileId, setUserId } from '@/store/userSlice'
 import { getUserProfile } from '@/lib/utils'
 
-const Header = () => {
+export const Header = () => {
   const [toggle, setToggle] = useState(false)
   const dispatch = useDispatch()
   const authState = useSelector(selectAuthState)
@@ -22,7 +17,7 @@ const Header = () => {
 
     if (token) {
       dispatch(setAuthState(true))
-      getUserProfile({ token }).then((res) => {
+      getUserProfile({ token }).then(res => {
         dispatch(setUserState(res?.profile))
         dispatch(setUserName(res?.username))
         dispatch(setProfileId(res?.profileId))
@@ -32,7 +27,7 @@ const Header = () => {
   }, [dispatch])
 
   const handleToggle = () => {
-    setToggle((toggle) => !toggle)
+    setToggle(toggle => !toggle)
   }
   const handleLogout = () => {
     dispatch(setAuthState(false))
@@ -84,10 +79,7 @@ const Header = () => {
           </Link>
           {authState ? (
             <>
-              <Link
-                href="/user-profile"
-                className="md:inline-block mr-4 px-2 py-1"
-              >
+              <Link href="/user-profile" className="md:inline-block mr-4 px-2 py-1">
                 <p>Profile</p>
               </Link>
               <div
@@ -116,18 +108,12 @@ const Header = () => {
       {toggle && (
         <div className="md:flex lg:items-center md:w-auto w-full block items-center">
           <div className="md:flex-grow text-end">
-            <Link
-              href="/provider-registration"
-              className="block mt-4 md:inline-block lg:mt-0 mr-4"
-            >
+            <Link href="/provider-registration" className="block mt-4 md:inline-block lg:mt-0 mr-4">
               Become a Provider
             </Link>
             {authState ? (
               <>
-                <Link
-                  href="/user-profile"
-                  className="block mt-4 md:inline-block md:mt-0 mr-4"
-                >
+                <Link href="/user-profile" className="block mt-4 md:inline-block md:mt-0 mr-4">
                   <p>Profile</p>
                 </Link>
                 <div
@@ -139,10 +125,7 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link
-                  href="/user-login"
-                  className="block mt-4 md:inline-block md:mt-0 mr-4"
-                >
+                <Link href="/user-login" className="block mt-4 md:inline-block md:mt-0 mr-4">
                   Login
                 </Link>
                 <Link
@@ -159,5 +142,3 @@ const Header = () => {
     </header>
   )
 }
-
-export default Header

@@ -10,12 +10,7 @@ import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
-import {
-  setProfileId,
-  setUserId,
-  setUserName,
-  setUserState,
-} from '@/store/userSlice'
+import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
 interface IndexProps {}
 const Index: FC<IndexProps> = ({}) => {
@@ -23,10 +18,7 @@ const Index: FC<IndexProps> = ({}) => {
   const [error, setError] = useState<string[] | string>()
   const dispatch = useDispatch()
   const RegistrationSchema = Yup.object().shape({
-    username: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Required'),
+    username: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
     first_name: Yup.string().required(),
     last_name: Yup.string().required(),
     phone_number: Yup.number().required(),
@@ -42,10 +34,7 @@ const Index: FC<IndexProps> = ({}) => {
       )
       .min(6, 'Password must be at least 6 characters long')
       .required('Password is required'),
-    repassword: Yup.string().oneOf(
-      [Yup.ref('password')],
-      'Passwords dont match',
-    ),
+    repassword: Yup.string().oneOf([Yup.ref('password')], 'Passwords dont match'),
   })
 
   const formik = useFormik({
@@ -80,7 +69,7 @@ const Index: FC<IndexProps> = ({}) => {
           county: formik.values.county,
           Eircode: formik.values.eircode,
         },
-      }).then((res) => {
+      }).then(res => {
         console.log(res)
         if (res?.status === 201) {
           handleLogin()
@@ -99,11 +88,11 @@ const Index: FC<IndexProps> = ({}) => {
         email: formik.values.email,
         password: formik.values.password,
       },
-    }).then((res) => {
+    }).then(res => {
       if (res?.status === 200) {
         handleToken({ token: res.message.accessToken }).then(() => {
           dispatch(setAuthState(true))
-          getUserProfile({ token: res.message.accessToken }).then((res) => {
+          getUserProfile({ token: res.message.accessToken }).then(res => {
             dispatch(setUserState(res?.profile))
             dispatch(setUserName(res?.username))
             dispatch(setProfileId(res?.profileId))
@@ -130,9 +119,7 @@ const Index: FC<IndexProps> = ({}) => {
   return (
     <div className="bg-slate-100">
       <div className="flex flex-col min-h-screen mx-auto max-w-2xl px-4 pt-8 pb-16">
-        <p className="text-center font-bold text-3xl mb-8">
-          Create your account
-        </p>
+        <p className="text-center font-bold text-3xl mb-8">Create your account</p>
         <div id="forms-wrapper" className="bg-white p-8">
           <form onSubmit={formik?.handleSubmit}>
             <div className="sm:grid sm:grid-cols-2 gap-5 aspect-auto">
@@ -147,9 +134,7 @@ const Index: FC<IndexProps> = ({}) => {
                   onChange={formik?.handleChange}
                 />
                 {formik?.errors?.username && formik.touched.username ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.username}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.username}</p>
                 ) : (
                   ''
                 )}
@@ -165,9 +150,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.first_name && formik.touched.first_name ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.first_name}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.first_name}</p>
                 ) : (
                   ''
                 )}
@@ -183,9 +166,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.last_name && formik.touched.last_name ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.last_name}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.last_name}</p>
                 ) : (
                   ''
                 )}
@@ -201,9 +182,7 @@ const Index: FC<IndexProps> = ({}) => {
                   onChange={formik?.handleChange}
                 />
                 {formik?.errors?.phone_number && formik.touched.phone_number ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.phone_number}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.phone_number}</p>
                 ) : (
                   ''
                 )}
@@ -219,9 +198,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.email && formik.touched.email ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.email}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.email}</p>
                 ) : (
                   ''
                 )}
@@ -237,9 +214,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.city && formik.touched.city ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.city}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.city}</p>
                 ) : (
                   ''
                 )}
@@ -255,9 +230,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.county && formik.touched.county ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.county}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.county}</p>
                 ) : (
                   ''
                 )}
@@ -273,9 +246,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.eircode && formik.touched.eircode ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.eircode}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.eircode}</p>
                 ) : (
                   ''
                 )}
@@ -291,9 +262,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.address && formik.touched.address ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.address}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.address}</p>
                 ) : (
                   ''
                 )}
@@ -309,9 +278,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.password && formik.touched.password ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.password}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.password}</p>
                 ) : (
                   ''
                 )}
@@ -327,9 +294,7 @@ const Index: FC<IndexProps> = ({}) => {
                   className="form-input"
                 />
                 {formik?.errors?.repassword && formik.touched.repassword ? (
-                  <p className="text-red-400 text-sm mt-1">
-                    {formik.errors.repassword}
-                  </p>
+                  <p className="text-red-400 text-sm mt-1">{formik.errors.repassword}</p>
                 ) : (
                   ''
                 )}

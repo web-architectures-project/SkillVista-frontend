@@ -10,12 +10,7 @@ import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '@/store/authSlice'
 import { getUserProfile, handleToken, setSession } from '@/lib/utils'
-import {
-  setProfileId,
-  setUserId,
-  setUserName,
-  setUserState,
-} from '@/store/userSlice'
+import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
 interface indexProps {}
 
@@ -42,11 +37,11 @@ const Index: FC<indexProps> = ({}) => {
           email: formik.values.email,
           password: formik.values.password,
         },
-      }).then((res) => {
+      }).then(res => {
         if (res?.status === 200) {
           handleToken({ token: res.message.accessToken }).then(() => {
             dispatch(setAuthState(true))
-            getUserProfile({ token: res.message.accessToken }).then((res) => {
+            getUserProfile({ token: res.message.accessToken }).then(res => {
               dispatch(setUserState(res?.profile))
               dispatch(setUserName(res?.username))
               dispatch(setProfileId(res?.profileId))

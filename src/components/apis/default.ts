@@ -4,8 +4,8 @@ import { getCookie } from 'cookies-next'
 interface apiRequesProps {
   method: string
   path: string
-  body?: Object
-  header?: Object
+  body?: object
+  header?: object
 }
 
 export const customAxios = axios.create({
@@ -13,23 +13,18 @@ export const customAxios = axios.create({
 })
 
 customAxios.interceptors.request.use(
-  async (config) => {
+  async config => {
     const accessToken = getCookie('cookie-token')
     config.headers.Authorization = `Bearer ${accessToken}`
     return config
   },
-  (error) => {
+  error => {
     console.log(error)
     return Promise.reject(error)
   },
 )
 
-export async function apiRequest({
-  method,
-  path,
-  body,
-  header,
-}: apiRequesProps) {
+export async function apiRequest({ method, path, body, header }: apiRequesProps) {
   try {
     let res = null
     if (method === 'GET') {
@@ -42,11 +37,13 @@ export async function apiRequest({
       res = await customAxios.delete(path, body)
     }
     return { status: res?.status || res?.data?.status, message: res?.data }
-  } catch (error) {
-    console.log(error?.response?.data?.message)
-    return {
-      status: error?.response?.status,
-      message: error?.response?.data?.message,
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.log(error.response?.data?.message)
+      return {
+        status: error?.response?.status,
+        message: error?.response?.data?.message,
+      }
     }
   }
 }

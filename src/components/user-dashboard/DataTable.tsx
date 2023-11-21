@@ -1,10 +1,5 @@
 // Import the necessary dependencies and components
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 import {
   Table,
@@ -13,21 +8,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table'
 
 // Define the interface for the DataTable component's props
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]; // Column definitions
-  data: TData[]; // Data to display in the table
-  queryData: object;
-  query: string; // Search query
+  columns: ColumnDef<TData, TValue>[] // Column definitions
+  data: TData[] // Data to display in the table
+  queryData: object
+  query: string // Search query
 }
 
 // Define the DataTable component as a functional component
 export function DataTable<TData, TValue>({
   columns,
   data,
-  query,
   queryData,
 }: DataTableProps<TData, TValue>) {
   // Initialize a table instance using useReactTable
@@ -35,30 +29,27 @@ export function DataTable<TData, TValue>({
     data, // Data to display
     columns, // Column definitions
     getCoreRowModel: getCoreRowModel(), // Row model
-  });
+  })
 
   return (
     <div
       className={`${
-        queryData ? "opacity-100 visible" : "invisible opacity-0"
+        queryData ? 'opacity-100 visible' : 'invisible opacity-0'
       } rounded-md w-full transition ease-linear duration-1000`}
     >
       <Table>
         {/* TableHeader section: Defines the table header with column headers */}
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
+              {headerGroup.headers.map(header => {
                 return (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -66,12 +57,9 @@ export function DataTable<TData, TValue>({
         {/* TableBody section: Displays table rows and data */}
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
+            table.getRowModel().rows.map(row => (
+              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -89,5 +77,5 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }

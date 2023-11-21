@@ -1,8 +1,4 @@
-import {
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-  NextApiHandler,
-} from 'next'
+import { GetServerSidePropsContext, GetServerSidePropsResult, NextApiHandler } from 'next'
 import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next'
 
 declare module 'iron-session' {
@@ -20,9 +16,7 @@ export function withSessionRoute(handler: NextApiHandler) {
   return withIronSessionApiRoute(handler, sessionOptions)
 }
 
-export function withSessionSsr<
-  P extends { [key: string]: unknown } = { [key: string]: unknown }
->(
+export function withSessionSsr<P extends { [key: string]: unknown } = { [key: string]: unknown }>(
   handler: ({
     req,
     res,
