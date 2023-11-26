@@ -1,28 +1,44 @@
-// Import necessary components and libraries
-
+import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input' // Importing the Input component
-import { Label } from '@/components/ui/label' // Importing the Label component
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { SelectBox } from '@/components/ui/select'
 import { TextArea } from '@/components/ui/textArea'
-import { useFormik } from 'formik' // Importing useFormik hook for form handling
+import { useFormik } from 'formik'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
-import { FC, useRef, useState } from 'react' // Importing FC (Functional Component) type from React
-import * as Yup from 'yup' // Import Yup for form validation
+import { listProps } from '@/components/ui/select'
 
-// Define the props interface for the 'index' component
+import { FC, useEffect, useRef, useState } from 'react'
+import * as Yup from 'yup'
+import { useSelector } from 'react-redux'
+import { selectUserId } from '@/store/userSlice'
+import { Modal } from '@/components/ui/modal'
+import { useRouter } from 'next/router'
+
 interface IndexProps {}
 
-// Define the 'index' component as a functional component
-export const Index: FC<IndexProps> = () => {
+export interface ListProps {
+  service_category_id: number
+  service_name: string
+  description: string
+}
+
+const Index: FC<IndexProps> = () => {
   const router = useRouter()
-  const approved = true
-  // Define the Yup schema for form validation
+  const userId = useSelector(selectUserId)
+  const [error, setError] = useState<string[] | string>()
+  const [profileImg, setProfileImg] = useState<File | null>()
+  const [changedImage, setChangedImage] = useState<string | ArrayBuffer | null>()
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
+  const [serviceType, setServiceType] = useState<listProps[]>([])
+  const [successModal, setSuccessModal] = useState(false)
+
   const RegistrationSchema = Yup.object().shape({
-    title: Yup.string().required(),
-    description: Yup.string().required(),
-    price: Yup.number().required(),
-    availability: Yup.string().required(),
+    title: Yup.string().required('Required'),
+    description: Yup.string().max(1000, 'Too Long!').required('Required'),
+    price: Yup.number().required('Required'),
+    serviceType: Yup.string().required('Required'),
+    availability: Yup.string().max(255, 'Too Long!').required('Required'),
   })
 
   const formik = useFormik({
@@ -31,38 +47,34 @@ export const Index: FC<IndexProps> = () => {
       description: '',
       price: 0,
       availability: '',
+      serviceType: serviceType[0]?.service_name,
     },
     validationSchema: RegistrationSchema,
     onSubmit: () => {
-      console.log(formik.values)
-      // console.log(formik)
-      // apiRequest({
-      //   method: 'POST',
-      //   path: 'users/register',
-      //   body: {
-      //     username: formik.values.username,
-      //     email: 'string',
-      //     password: 'string',
-      //     user_type: 'string',
-      //     first_name: 'string',
-      //     last_name: 'string',
-      //     phone_number: 'string',
-      //     address: 'string',
-      //     city: 'string',
-      //     county: 'string',
-      //     Eircode: 'string',
-      //     profile_picture_url: 'string',
-      //     bio: 'string',
-      //   },
-      // })
+      createService()
     },
   })
 
-  const [profileImg, setProfileImg] = useState<any>()
-  const [changedImage, setChangedImage] = useState<string | ArrayBuffer | null>()
-  const hiddenFileInput = useRef<any>(null)
+  useEffect(() => {
+    apiRequest({
+      method: 'GET',
+      path: 'service-types',
+    }).then(res => {
+      if (res?.status === 200) {
+        setServiceType(res.message)
+        formik.setFieldValue('serviceType', res.message[0]?.service_name)
+      }
+    })
+  }, [])
+
+  const handleSuccessModal = () => {
+    setSuccessModal(!successModal)
+  }
+
   const handleClick = () => {
-    hiddenFileInput.current.click()
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click()
+    }
   }
 
   let imageUrl = ''
@@ -100,9 +112,40 @@ export const Index: FC<IndexProps> = () => {
     fileReader.readAsDataURL(fileUploaded)
   }
 
+  const createService = () => {
+    const serviceTypeId = serviceType.find(item => item.service_name === formik.values.serviceType)
+    handleSuccessModal()
+    apiRequest({
+      method: 'POST',
+      path: 'services',
+      body: {
+        provider_id: userId,
+        service_type_id: serviceTypeId?.service_category_id,
+        description: formik.values.description,
+        pricing: formik.values.price,
+        availability: formik.values.availability,
+        date_created: new Date(),
+      },
+    }).then(res => {
+      if (res?.status === 200) {
+        handleSuccessModal()
+      } else {
+        setError(res?.message)
+      }
+    })
+  }
+
+  const modalRightFunc = () => {
+    router.push('/provider-service')
+    handleSuccessModal()
+  }
+  const modalLeftFunc = () => {
+    router.push('/user-dashboard')
+    handleSuccessModal()
+  }
+
   return (
-    // Render the main content within a grid layout
-    <div className="lg:flex lg:flex-row h-screen w-full">
+    <div className="lg:flex lg:flex-row ">
       <div className="hidden lg:flex lg:flex-col lg:justify-center lg:w-4/12 bg-gradient-to-bl from-blue-500 via-sky-400 to-blue-500 text-center ">
         <div className="text-white text-3xl font-semibold tracking-wide">Let&apos;s Get</div>
         <div className="text-white text-6xl font-bold tracking-wide ">Started</div>
@@ -117,6 +160,18 @@ export const Index: FC<IndexProps> = () => {
           REGISTER WITH PERSONAL INFO AND PROFESSIONAL INFO
         </div>
         <div className="pt-10">
+          {successModal && (
+            <Modal
+              title={'Success'}
+              content={
+                'Your service has been successfully created. You can check your service in the service page.'
+              }
+              rightButton={'Go to Service Page'}
+              leftButton={'Go to Home'}
+              rightFunc={modalRightFunc}
+              leftFunc={modalLeftFunc}
+            />
+          )}
           <form onSubmit={formik?.handleSubmit}>
             <div className="pb-3 flex justify-center">
               <Image
@@ -147,18 +202,36 @@ export const Index: FC<IndexProps> = () => {
                 onChange={formik.handleChange}
                 className="form-input"
               />
+              {formik?.errors?.title && formik.touched.title ? (
+                <p className="text-red-400 text-sm mt-1">{formik.errors.title}</p>
+              ) : (
+                ''
+              )}
+            </div>
+            <div className="pb-3">
+              <Label>Service Type</Label>
+              <SelectBox
+                name="serviceType"
+                value={formik.values.serviceType}
+                lists={serviceType}
+                onChange={formik.handleChange}
+              />
             </div>
             <div className="pb-3">
               <Label>Desciprtion</Label>
               <TextArea
                 rows={5}
                 name="description"
-                placeholder="Tell us about yourservice"
+                placeholder="Tell us about your service"
                 value={formik.values.description}
                 onChange={formik.handleChange}
               />
+              {formik?.errors?.description && formik.touched.description ? (
+                <p className="text-red-400 text-sm mt-1">{formik.errors.description}</p>
+              ) : (
+                ''
+              )}
             </div>
-
             <div className="pb-3">
               <Label>Price</Label>
               <div className="flex items-center">
@@ -172,6 +245,11 @@ export const Index: FC<IndexProps> = () => {
                 />
                 <div className="ml-3">€</div>
               </div>
+              {formik?.errors?.price && formik.touched.price ? (
+                <p className="text-red-400 text-sm mt-1">{formik.errors.price}</p>
+              ) : (
+                ''
+              )}
             </div>
             <div className="pb-3">
               <Label>Availability</Label>
@@ -183,7 +261,24 @@ export const Index: FC<IndexProps> = () => {
                 onChange={formik.handleChange}
                 className="form-input"
               />
+              {formik?.errors?.availability && formik.touched.availability ? (
+                <p className="text-red-400 text-sm mt-1">{formik.errors.availability}</p>
+              ) : (
+                ''
+              )}
             </div>
+
+            {Array.isArray(error) ? (
+              error.map((i_error, index) => {
+                return (
+                  <p className="text-sm text-red-500 font-light " key={index}>
+                    {i_error}
+                  </p>
+                )
+              })
+            ) : (
+              <p className="text-sm text-red-500 font-light">{error}</p>
+            )}
             <div className="flex justify-end">
               <Button type="submit" className="bg-mainblue hover:bg-slate-300">
                 Save
@@ -195,3 +290,5 @@ export const Index: FC<IndexProps> = () => {
     </div>
   )
 }
+
+export default Index
