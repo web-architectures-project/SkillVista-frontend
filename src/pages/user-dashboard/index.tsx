@@ -1,8 +1,13 @@
-import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
+// import { DataTable } from '@/components/user-dashboard/DataTable'
+// import FullScreenSearchBar from '@/components/user-dashboard/FullScreenSearchBar'
+// import { columns } from '@/components/user-dashboard/columns'
+// import { DummyData } from '@/lib/utils/UserDashboardData'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { FC, useEffect, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
+import { useRouter } from 'next/router'
 import { getCookies, setCookie } from 'cookies-next'
+// import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 
@@ -19,6 +24,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
   const [cookieModal, setCookieModal] = useState(false)
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
+  const router = useRouter()
   const authState = useSelector(selectAuthState)
 
   /* Cookie-consent check & Modal */
@@ -73,12 +79,12 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 
       <div className="relative h-screen">
         <div>
-          <FullScreenSearchBar
+          {/* <FullScreenSearchBar
             queryData={fetchedData}
             query={query}
             setQuery={setQuery}
             fetchDataOnEnter={fetchDataOnEnter}
-          />
+          /> */}
 
           {/* <DataTable
             columns={columns}

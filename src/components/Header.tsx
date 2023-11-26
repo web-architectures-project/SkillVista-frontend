@@ -6,7 +6,7 @@ import { deleteCookie, getCookie } from 'cookies-next'
 import { setUserName, setUserState, setProfileId, setUserId } from '@/store/userSlice'
 import { getUserProfile } from '@/lib/utils'
 
-export const Header = () => {
+const Header = () => {
   const [toggle, setToggle] = useState(false)
   const dispatch = useDispatch()
   const authState = useSelector(selectAuthState)
@@ -142,3 +142,4 @@ export const Header = () => {
     </header>
   )
 }
+export default Header

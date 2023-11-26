@@ -2,8 +2,8 @@ import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { selectAuthState, setAuthState } from '@/store/authSlice'
-import { selectProfileId, selectUserState } from '@/store/userSlice'
+import { setAuthState } from '@/store/authSlice'
+import { selectProfileId, selectUserState, setUserState } from '@/store/userSlice'
 import { deleteCookie } from 'cookies-next'
 import {
   Dialog,
@@ -17,22 +17,29 @@ import {
 import { useFormik } from 'formik'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Yup from 'yup'
 
+interface reponseProps {
+  status?: number
+  message?: number
+}
+
 interface indexProps {}
 
-const Index: FC<indexProps> = ({}) => {
+const Index: FC<indexProps> = () => {
   const [formEditable, setFormEditable] = useState(true)
   const [isSame, setIsSame] = useState(false)
   const [inputConfirmationText, setInputConfirmationText] = useState('')
 
+  const dispatch = useDispatch()
+  const router = useRouter()
   const userState = useSelector(selectUserState)
   const profileId = useSelector(selectProfileId)
-  const hiddenFileInput = useRef<any>(null)
-  const [profileImg, setProfileImg] = useState<any>()
-  const [changedImage, setChangedImage] = useState<any>()
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
+  const [profileImg, setProfileImg] = useState<File | null>()
+  const [changedImage, setChangedImage] = useState<string | null>()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -46,9 +53,6 @@ const Index: FC<indexProps> = ({}) => {
     bio: Yup.string(),
   })
 
-  const dispatch = useDispatch()
-  const router = useRouter()
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -57,7 +61,7 @@ const Index: FC<indexProps> = ({}) => {
       phone_number: userState.phone_number,
       address: userState.address,
       county: userState.county,
-      city: userState.county,
+      city: userState.city,
       Eircode: userState.Eircode,
       profile_picture_url: userState.profile_picture_url,
       bio: userState.bio,
@@ -71,8 +75,11 @@ const Index: FC<indexProps> = ({}) => {
       method: 'PUT',
       path: `profiles/${profileId}`,
       body: formik.values,
-    }).then(res => {
-      if (res.status === 200) {
+    }).then((res: reponseProps | undefined) => {
+      if (res?.status === 200) {
+        dispatch(setUserState(formik.values))
+        handleEditability()
+
         if (profileImg) {
           apiRequest({
             method: 'POST',
@@ -83,8 +90,8 @@ const Index: FC<indexProps> = ({}) => {
                 'content-type': 'multipart/form-data',
               },
             },
-          }).then(res => {
-            if (res.message === 200) {
+          }).then((res: reponseProps | undefined) => {
+            if (res?.message === 200) {
               alert('saved successfully!')
             }
           })
@@ -98,23 +105,26 @@ const Index: FC<indexProps> = ({}) => {
   }
 
   const handleClick = () => {
-    hiddenFileInput.current.click()
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click()
+    }
   }
 
   const handleEditability = () => {
     setFormEditable(!formEditable)
   }
 
-  const handleChange = (event: any) => {
-    const fileUploaded = event.target.files[0]
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const fileUploaded = event.target.files?.[0]
     setProfileImg(fileUploaded)
 
     const fileReader = new FileReader()
     fileReader.addEventListener('load', () => {
-      setChangedImage(fileReader?.result)
+      setChangedImage(fileReader?.result as string)
     })
-
-    fileReader.readAsDataURL(fileUploaded)
+    if (fileUploaded) {
+      fileReader.readAsDataURL(fileUploaded)
+    }
   }
 
   const handleLogout = () => {
@@ -141,11 +151,11 @@ const Index: FC<indexProps> = ({}) => {
       deleteCookie('cookie-token')
       router.push('user-login')
     } catch (error) {
-      console.log(error)
+      alert(error)
     }
   }
 
-  const handleDeleteInputConfirmation = (e: any) => {
+  const handleDeleteInputConfirmation = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputConfirmationText(e.target.value)
   }
 
@@ -288,7 +298,7 @@ const Index: FC<indexProps> = ({}) => {
               type="submit"
               className="bg-mainblue hover:bg-slate-300"
               onClick={() => {
-                saveProfile()
+                !formEditable && saveProfile()
               }}
             >
               Save

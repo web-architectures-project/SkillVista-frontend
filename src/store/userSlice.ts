@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { AppState } from './store'
 
 interface User {
-  username: string
+  username?: string
   first_name: string
   last_name: string
   phone_number: string

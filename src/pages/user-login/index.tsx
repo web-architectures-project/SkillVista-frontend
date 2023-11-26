@@ -9,12 +9,12 @@ import { useRouter } from '../../../node_modules/next/navigation'
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '@/store/authSlice'
-import { getUserProfile, handleToken, setSession } from '@/lib/utils'
+import { getUserProfile, handleToken } from '@/lib/utils'
 import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
 interface indexProps {}
 
-const Index: FC<indexProps> = ({}) => {
+const Index: FC<indexProps> = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [error, setError] = useState<string>('')
@@ -92,8 +92,7 @@ const Index: FC<indexProps> = ({}) => {
             </div>
           </form>
           <div className="mt-10 text-center">
-            {/* eslint-disable-next-line react/no-unescaped-entities */}
-            <span className="font-lights">Don't have an account?</span>{' '}
+            <span className="font-lights"> You Don&apos;t have an account? </span>
             <span className="text-mainblue font-lights">
               <Link href="/user-registration">Sign up.</Link>
             </span>
