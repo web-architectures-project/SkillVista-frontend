@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label' // Importing the Label component
 import { TextArea } from '@/components/ui/textArea'
 import { useFormik } from 'formik' // Importing useFormik hook for form handling
 import Image from 'next/image'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import { FC, useRef, useState } from 'react' // Importing FC (Functional Component) type from React
 import * as Yup from 'yup' // Import Yup for form validation
 
@@ -15,8 +15,8 @@ interface IndexProps {}
 
 // Define the 'index' component as a functional component
 export const Index: FC<IndexProps> = () => {
-  const router = useRouter()
-  const approved = true
+  // const router = useRouter()
+  // const approved = true
   // Define the Yup schema for form validation
   const RegistrationSchema = Yup.object().shape({
     title: Yup.string().required(),
@@ -58,11 +58,13 @@ export const Index: FC<IndexProps> = () => {
     },
   })
 
-  const [profileImg, setProfileImg] = useState<any>()
+  // const [profileImg, setProfileImg] = useState<any>()
   const [changedImage, setChangedImage] = useState<string | ArrayBuffer | null>()
-  const hiddenFileInput = useRef<any>(null)
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
   const handleClick = () => {
-    hiddenFileInput.current.click()
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click()
+    }
   }
 
   let imageUrl = ''
@@ -90,7 +92,7 @@ export const Index: FC<IndexProps> = () => {
       return
     }
 
-    setProfileImg(fileUploaded)
+    // setProfileImg(fileUploaded)
 
     const fileReader = new FileReader()
     fileReader.addEventListener('load', () => {

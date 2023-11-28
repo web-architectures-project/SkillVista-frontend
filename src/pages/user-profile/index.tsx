@@ -2,7 +2,7 @@ import { apiRequest } from '@/components/apis/default'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { selectAuthState, setAuthState } from '@/store/authSlice'
+import { setAuthState } from '@/store/authSlice'
 import { selectProfileId, selectUserState } from '@/store/userSlice'
 import { deleteCookie } from 'cookies-next'
 import {
@@ -23,16 +23,16 @@ import * as Yup from 'yup'
 
 interface indexProps {}
 
-const Index: FC<indexProps> = ({}) => {
+export const Index: FC<indexProps> = () => {
   const [formEditable, setFormEditable] = useState(true)
   const [isSame, setIsSame] = useState(false)
   const [inputConfirmationText, setInputConfirmationText] = useState('')
 
   const userState = useSelector(selectUserState)
   const profileId = useSelector(selectProfileId)
-  const hiddenFileInput = useRef<any>(null)
-  const [profileImg, setProfileImg] = useState<any>()
-  const [changedImage, setChangedImage] = useState<any>()
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
+  const [profileImg, setProfileImg] = useState<File>()
+  const [changedImage, setChangedImage] = useState<string>()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -72,7 +72,7 @@ const Index: FC<indexProps> = ({}) => {
       path: `profiles/${profileId}`,
       body: formik.values,
     }).then(res => {
-      if (res.status === 200) {
+      if (res?.status === 200) {
         if (profileImg) {
           apiRequest({
             method: 'POST',
@@ -84,7 +84,7 @@ const Index: FC<indexProps> = ({}) => {
               },
             },
           }).then(res => {
-            if (res.message === 200) {
+            if (res?.message === 200) {
               alert('saved successfully!')
             }
           })
@@ -98,23 +98,27 @@ const Index: FC<indexProps> = ({}) => {
   }
 
   const handleClick = () => {
-    hiddenFileInput.current.click()
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click()
+    }
   }
 
   const handleEditability = () => {
     setFormEditable(!formEditable)
   }
 
-  const handleChange = (event: any) => {
-    const fileUploaded = event.target.files[0]
-    setProfileImg(fileUploaded)
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const fileUploaded = event.target.files[0]
+      setProfileImg(fileUploaded)
 
-    const fileReader = new FileReader()
-    fileReader.addEventListener('load', () => {
-      setChangedImage(fileReader?.result)
-    })
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        setChangedImage(fileReader.result as string)
+      })
 
-    fileReader.readAsDataURL(fileUploaded)
+      fileReader.readAsDataURL(fileUploaded)
+    }
   }
 
   const handleLogout = () => {
@@ -145,7 +149,7 @@ const Index: FC<indexProps> = ({}) => {
     }
   }
 
-  const handleDeleteInputConfirmation = (e: any) => {
+  const handleDeleteInputConfirmation = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputConfirmationText(e.target.value)
   }
 
@@ -338,5 +342,3 @@ const Index: FC<indexProps> = ({}) => {
     </div>
   )
 }
-
-export default Index

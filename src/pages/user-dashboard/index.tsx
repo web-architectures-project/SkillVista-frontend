@@ -1,6 +1,6 @@
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
 import { getCookies, setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
@@ -15,7 +15,7 @@ interface ServerSideProps {
   req: NextApiRequest
 }
 
-const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
+export default function Index({ consent }: IndexProps): JSX.Element {
   const [cookieModal, setCookieModal] = useState(false)
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
@@ -42,7 +42,8 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 
   const fetchDataOnEnter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setFetchedData(data?.data)
+    const formData = new FormData(event.currentTarget)
+    setFetchedData(formData)
   }
 
   useEffect(() => {
@@ -91,9 +92,6 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
     </main>
   )
 }
-
-// Export the Index component as the default export
-export default Index
 
 export async function getServerSideProps({ req, res }: ServerSideProps) {
   const data = getCookies({ req, res })

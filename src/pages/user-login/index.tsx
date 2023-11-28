@@ -9,12 +9,12 @@ import { useRouter } from '../../../node_modules/next/navigation'
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '@/store/authSlice'
-import { getUserProfile, handleToken, setSession } from '@/lib/utils'
+import { getUserProfile, handleToken } from '@/lib/utils'
 import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
 interface indexProps {}
 
-const Index: FC<indexProps> = ({}) => {
+export const Index: FC<indexProps> = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [error, setError] = useState<string>('')
@@ -103,5 +103,3 @@ const Index: FC<indexProps> = ({}) => {
     </div>
   )
 }
-
-export default Index

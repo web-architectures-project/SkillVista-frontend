@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux'
 import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
 interface IndexProps {}
-const Index: FC<IndexProps> = ({}) => {
+export const Index: FC<IndexProps> = () => {
   const router = useRouter()
   const [error, setError] = useState<string[] | string>()
   const dispatch = useDispatch()
@@ -29,7 +29,7 @@ const Index: FC<IndexProps> = ({}) => {
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string()
       .matches(
-        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\*.!@$%^&(){}[\]:;<>,.?/~_+-=|\\]).{8,32}$/,
+        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[\]:;<>,.?/~_+-=|\\]).{8,32}$/,
         'Password must have atleast 1 Uppercase letter, 1 Lowercase letter, 1 special character and 1 number',
       )
       .min(6, 'Password must be at least 6 characters long')
@@ -101,7 +101,7 @@ const Index: FC<IndexProps> = ({}) => {
           router.push('/user-dashboard')
         })
       } else {
-        setError(res.message)
+        setError(res?.message)
       }
     })
   }
@@ -324,5 +324,3 @@ const Index: FC<IndexProps> = ({}) => {
     </div>
   )
 }
-
-export default Index
