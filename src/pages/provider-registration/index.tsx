@@ -98,7 +98,7 @@ const Index: FC<IndexProps> = () => {
       return
     }
 
-    if (!event.target.files && fileUploaded.length > 0) {
+    if (!event.target.files) {
       return
     }
 
