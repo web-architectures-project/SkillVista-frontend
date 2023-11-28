@@ -28,7 +28,7 @@ export default function Index() {
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string()
       .matches(
-        /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[\]:;<>,.?/~_+-=|\\]).{8,32}$/,
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\\[\]:;<>,.?/~`"-]).{8,32}$/,
         'Password must have atleast 1 Uppercase letter, 1 Lowercase letter, 1 special character and 1 number',
       )
       .min(6, 'Password must be at least 6 characters long')
