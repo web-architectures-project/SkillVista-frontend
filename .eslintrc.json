@@ -10,7 +10,7 @@
     "react/react-in-jsx-scope": "warn",
     "react-hooks/rules-of-hooks": "warn",
     "react-hooks/exhaustive-deps": "warn",
-    "import/no-default-export": "error",
+    "import/no-default-export": "off",
     "prettier/prettier": "warn"
   },
   "parser": "@typescript-eslint/parser",

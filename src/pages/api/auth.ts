@@ -1,10 +1,7 @@
 import { withSessionRoute } from '@/lib/withSession'
 import { NextApiRequest, NextApiResponse } from '../../../node_modules/next/dist/shared/lib/utils'
 
-export const handler = withSessionRoute(async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default withSessionRoute(async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { token } = req.body
 
   req.session.token = token

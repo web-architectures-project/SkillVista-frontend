@@ -7,13 +7,13 @@ import { setAuthState } from '@/store/authSlice'
 import { useFormik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
 import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
 interface IndexProps {}
-export const Index: FC<IndexProps> = () => {
+const Index: FC<IndexProps> = () => {
   const router = useRouter()
   const [error, setError] = useState<string[] | string>()
   const dispatch = useDispatch()
@@ -70,7 +70,6 @@ export const Index: FC<IndexProps> = () => {
           Eircode: formik.values.eircode,
         },
       }).then(res => {
-        console.log(res)
         if (res?.status === 201) {
           handleLogin()
         } else {
@@ -105,16 +104,6 @@ export const Index: FC<IndexProps> = () => {
       }
     })
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setError('')
-    }, 5000)
-  }, [error])
-
-  useEffect(() => {
-    console.log(error)
-  }, [error])
 
   return (
     <div className="bg-slate-100">
@@ -304,7 +293,17 @@ export const Index: FC<IndexProps> = () => {
               <p className="text-sm text-slate-500 font-light">
                 * Your password: must be at least 6 characters long
               </p>
-              <p className="text-red-400">{error}</p>
+              {Array.isArray(error) ? (
+                error.map((i_error, index) => {
+                  return (
+                    <p className="text-sm text-red-500 font-light " key={index}>
+                      {i_error}
+                    </p>
+                  )
+                })
+              ) : (
+                <p className="text-sm text-slate-500 font-light">{error}</p>
+              )}
             </div>
 
             <div className="flex flex-col mt-5">
@@ -314,7 +313,7 @@ export const Index: FC<IndexProps> = () => {
             </div>
           </form>
           <div className="mt-10 text-center">
-            <span className="font-lights">Already have an account?</span>{' '}
+            <span className="font-lights">Already have an account?</span>
             <span className="text-mainblue font-lights">
               <Link href={'/user-login'}>Log in</Link>
             </span>

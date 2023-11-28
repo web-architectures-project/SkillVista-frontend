@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { setAuthState } from '@/store/authSlice'
-import { selectProfileId, selectUserState } from '@/store/userSlice'
+import { selectProfileId, selectUserState, setUserState } from '@/store/userSlice'
 import { deleteCookie } from 'cookies-next'
 import {
   Dialog,
@@ -17,22 +17,29 @@ import {
 import { useFormik } from 'formik'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Yup from 'yup'
 
+interface reponseProps {
+  status?: number
+  message?: number
+}
+
 interface indexProps {}
 
-export const Index: FC<indexProps> = () => {
+const Index: FC<indexProps> = () => {
   const [formEditable, setFormEditable] = useState(true)
   const [isSame, setIsSame] = useState(false)
   const [inputConfirmationText, setInputConfirmationText] = useState('')
 
+  const dispatch = useDispatch()
+  const router = useRouter()
   const userState = useSelector(selectUserState)
   const profileId = useSelector(selectProfileId)
   const hiddenFileInput = useRef<HTMLInputElement>(null)
-  const [profileImg, setProfileImg] = useState<File>()
-  const [changedImage, setChangedImage] = useState<string>()
+  const [profileImg, setProfileImg] = useState<File | null>()
+  const [changedImage, setChangedImage] = useState<string | null>()
 
   const ProfileSchema = Yup.object().shape({
     first_name: Yup.string().required(),
@@ -46,9 +53,6 @@ export const Index: FC<indexProps> = () => {
     bio: Yup.string(),
   })
 
-  const dispatch = useDispatch()
-  const router = useRouter()
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -57,7 +61,7 @@ export const Index: FC<indexProps> = () => {
       phone_number: userState.phone_number,
       address: userState.address,
       county: userState.county,
-      city: userState.county,
+      city: userState.city,
       Eircode: userState.Eircode,
       profile_picture_url: userState.profile_picture_url,
       bio: userState.bio,
@@ -71,8 +75,11 @@ export const Index: FC<indexProps> = () => {
       method: 'PUT',
       path: `profiles/${profileId}`,
       body: formik.values,
-    }).then(res => {
+    }).then((res: reponseProps | undefined) => {
       if (res?.status === 200) {
+        dispatch(setUserState(formik.values))
+        handleEditability()
+
         if (profileImg) {
           apiRequest({
             method: 'POST',
@@ -83,7 +90,7 @@ export const Index: FC<indexProps> = () => {
                 'content-type': 'multipart/form-data',
               },
             },
-          }).then(res => {
+          }).then((res: reponseProps | undefined) => {
             if (res?.message === 200) {
               alert('saved successfully!')
             }
@@ -107,16 +114,15 @@ export const Index: FC<indexProps> = () => {
     setFormEditable(!formEditable)
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const fileUploaded = event.target.files[0]
-      setProfileImg(fileUploaded)
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const fileUploaded = event.target.files?.[0]
+    setProfileImg(fileUploaded)
 
-      const fileReader = new FileReader()
-      fileReader.addEventListener('load', () => {
-        setChangedImage(fileReader.result as string)
-      })
-
+    const fileReader = new FileReader()
+    fileReader.addEventListener('load', () => {
+      setChangedImage(fileReader?.result as string)
+    })
+    if (fileUploaded) {
       fileReader.readAsDataURL(fileUploaded)
     }
   }
@@ -145,7 +151,7 @@ export const Index: FC<indexProps> = () => {
       deleteCookie('cookie-token')
       router.push('user-login')
     } catch (error) {
-      console.log(error)
+      alert(error)
     }
   }
 
@@ -292,7 +298,7 @@ export const Index: FC<indexProps> = () => {
               type="submit"
               className="bg-mainblue hover:bg-slate-300"
               onClick={() => {
-                saveProfile()
+                !formEditable && saveProfile()
               }}
             >
               Save

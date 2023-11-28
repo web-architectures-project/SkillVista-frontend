@@ -42,7 +42,7 @@ export const setSession = async ({ token }: handleSessionProps) => {
     const response = await fetch('/api/auth', options)
     if (response.status !== 200) throw new Error("Can't login")
   } catch (err) {
-    throw new Error(err as string)
+    return new Error(err as string)
   }
 }
 
