@@ -17,7 +17,7 @@ import {
 import { useFormik } from 'formik'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Yup from 'yup'
 
@@ -26,9 +26,7 @@ interface reponseProps {
   message?: number
 }
 
-interface indexProps {}
-
-const Index: FC<indexProps> = () => {
+export default function Index() {
   const [formEditable, setFormEditable] = useState(true)
   const [isSame, setIsSame] = useState(false)
   const [inputConfirmationText, setInputConfirmationText] = useState('')

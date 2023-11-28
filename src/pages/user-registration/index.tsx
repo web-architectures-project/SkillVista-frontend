@@ -7,13 +7,12 @@ import { setAuthState } from '@/store/authSlice'
 import { useFormik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import * as Yup from 'yup'
 import { useDispatch } from 'react-redux'
 import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
-interface IndexProps {}
-const Index: FC<IndexProps> = () => {
+export default function Index() {
   const router = useRouter()
   const [error, setError] = useState<string[] | string>()
   const dispatch = useDispatch()

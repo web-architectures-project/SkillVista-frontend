@@ -22,8 +22,12 @@ interface ServerSideProps {
 
 export default function Index({ consent }: IndexProps): JSX.Element {
   const [cookieModal, setCookieModal] = useState(false)
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const authState = useSelector(selectAuthState)
 
@@ -46,6 +50,8 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     setCookieModal(false)
   }
 
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchDataOnEnter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
