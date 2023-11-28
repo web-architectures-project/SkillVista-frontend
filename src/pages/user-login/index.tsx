@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,9 +12,7 @@ import { setAuthState } from '@/store/authSlice'
 import { getUserProfile, handleToken } from '@/lib/utils'
 import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
 
-interface indexProps {}
-
-const Index: FC<indexProps> = () => {
+export default function Index() {
   const router = useRouter()
   const dispatch = useDispatch()
   const [error, setError] = useState<string>('')
@@ -102,5 +100,3 @@ const Index: FC<indexProps> = () => {
     </div>
   )
 }
-
-export default Index

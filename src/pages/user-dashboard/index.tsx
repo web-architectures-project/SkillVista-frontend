@@ -3,7 +3,7 @@
 // import { columns } from '@/components/user-dashboard/columns'
 // import { DummyData } from '@/lib/utils/UserDashboardData'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
 import { useRouter } from 'next/router'
 import { getCookies, setCookie } from 'cookies-next'
@@ -20,10 +20,14 @@ interface ServerSideProps {
   req: NextApiRequest
 }
 
-const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
+export default function Index({ consent }: IndexProps): JSX.Element {
   const [cookieModal, setCookieModal] = useState(false)
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const authState = useSelector(selectAuthState)
 
@@ -46,9 +50,12 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
     setCookieModal(false)
   }
 
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchDataOnEnter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setFetchedData(data?.data)
+    const formData = new FormData(event.currentTarget)
+    setFetchedData(formData)
   }
 
   useEffect(() => {
@@ -97,9 +104,6 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
     </main>
   )
 }
-
-// Export the Index component as the default export
-export default Index
 
 export async function getServerSideProps({ req, res }: ServerSideProps) {
   const data = getCookies({ req, res })
