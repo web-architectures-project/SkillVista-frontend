@@ -10,6 +10,7 @@ import { getCookies, setCookie } from 'cookies-next'
 // import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
+import { ChatBox } from '@/components/user-dashboard/chatbox'
 
 interface IndexProps {
   consent: boolean
@@ -78,6 +79,8 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
       )}
 
       <div className="relative h-screen">
+        <ChatBox />
+
         <div>
           {/* <FullScreenSearchBar
             queryData={fetchedData}
