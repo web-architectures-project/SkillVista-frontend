@@ -26,7 +26,7 @@ interface ServerSideProps {
   req: NextApiRequest
 }
 
-interface ServiceAvailability {
+type ServiceAvailability = {
   availability: string
   date_created: string
   description: string
@@ -62,23 +62,38 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const authState = useSelector(selectAuthState)
 
   const getServiceData = async () => {
-    const serviceData = await apiRequest({ method: METHODS.GET, path: '/services' })
-    setServiceData(serviceData?.message)
+    try {
+      const serviceData = await apiRequest({ method: METHODS.GET, path: '/services' })
+      setServiceData(serviceData?.message)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const getProviderNameFromId = async (providerId: number) => {
-    const provider = await apiRequest({ method: METHODS.GET, path: `/users/${String(providerId)}` })
-    setProviderName(provider?.message?.username)
+    try {
+      const provider = await apiRequest({
+        method: METHODS.GET,
+        path: `/users/${String(providerId)}`,
+      })
+      setProviderName(provider?.message?.username)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const getServicesUsingSearch = async (searchQuery: string) => {
-    const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
-    setServiceDataFromSearchInput(serviceData)
+    try {
+      const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
+      setServiceDataFromSearchInput(serviceData)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   useEffect(() => {
-    if (serviceDataFromSearch.length === 0) getServiceData()
-  }, [serviceDataFromSearch])
+    if (!serviceData) getServiceData()
+  }, [serviceData])
 
   useEffect(() => {
     serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
@@ -102,14 +117,13 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         provider: providerName,
         short_description: service.description,
       })
+      console.log(regularServiceData)
     })
   }, [serviceData])
 
   useEffect(() => {
-    console.log('Running??')
-
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
-    if (serviceDataFromSearch.length > 0) setServicesTobeUsed(serviceDataFromSearch)
+    else setServicesTobeUsed(serviceDataFromSearch)
   }, [serviceDataFromSearch, regularServiceData])
 
   /* Cookie-consent check & Modal */
