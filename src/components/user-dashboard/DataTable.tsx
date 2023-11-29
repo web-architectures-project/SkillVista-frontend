@@ -19,11 +19,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 // Define the DataTable component as a functional component
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  queryData,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   // Initialize a table instance using useReactTable
   const table = useReactTable({
     data, // Data to display
@@ -34,7 +30,7 @@ export function DataTable<TData, TValue>({
   return (
     <div
       className={`${
-        queryData ? 'opacity-100 visible' : 'invisible opacity-0'
+        data ? 'opacity-100 visible' : 'invisible opacity-0'
       } rounded-md w-full transition ease-linear duration-1000`}
     >
       <Table>
