@@ -1,48 +1,59 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button } from '../ui/button'
 import { apiRequest } from '../apis/default'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  selectUserChatState,
-  setUserChatState,
-  setTheOtherUserChatState,
-  selectTheOtherUserChatState,
-} from '@/store/chatSlilce'
+import { Chat, selectChatListState, setChatListState } from '@/store/chatSlilce'
 import { selectUserId } from '@/store/userSlice'
 
 export interface ChatBoxProps {}
 
 const ChatBox = () => {
-  const userChat = useSelector(selectUserChatState)
-  const theOtherUserChat = useSelector(selectTheOtherUserChatState)
+  const chatlist = useSelector(selectChatListState)
+
   const userId = useSelector(selectUserId)
   const dispatch = useDispatch()
+  const [message, setMessage] = useState<string>('')
 
-  useEffect(() => {
-    getMessages()
-  }, [])
-
-  const getMessages = () => {
+  const getMessages = useCallback(() => {
     apiRequest({
       method: 'GET',
       path: '/contacts',
     }).then(res => {
       if (res?.status === 200) {
-        setChatList(res.message)
-        const userChat = res.message.filter((item: any) => {
-          return item.user_id === userId
-        })
-        const theOtherUserChat = res.message.filter((item: any) => {
-          return item.user_id !== userId
-        })
-        dispatch(setUserChatState(userChat))
-        dispatch(setTheOtherUserChatState(theOtherUserChat))
+        dispatch(setChatListState(res.message))
+      }
+    })
+  }, [dispatch])
+
+  useEffect(() => {
+    getMessages()
+  }, [getMessages])
+
+  const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(event.target.value)
+  }
+
+  const handlePressSend = () => {
+    const chatform = {
+      user_id: userId,
+      provider_id: chatlist[0].provider_id,
+      who: userId === chatlist[0].provider_id ? 'service_provider' : 'user',
+      message_content: message,
+      date_sent: new Date().toISOString(),
+    }
+    const newList: Chat[] = chatlist.concat(chatform)
+    dispatch(setChatListState(newList))
+    apiRequest({
+      method: 'POST',
+      path: '/contacts',
+      body: chatform,
+    }).then(res => {
+      if (res?.status === 200) {
+        dispatch(setChatListState(res.message))
       }
     })
   }
-
-  const [chatList, setChatList] = useState([])
 
   return (
     <div className="flex flex-col lg:w-2/5 lg:h-3/5 h-2/4  py-7 px-7 mx-3 fixed inset-x-0 bottom-0  z-50 bg-white rounded-xl shadow-2xl">
@@ -56,25 +67,34 @@ const ChatBox = () => {
       <hr className="bg-black" />
       <div className="overflow-y-auto pb-20 flex-grow ">
         <div className="flex flex-col">
-          {chatList.map((item: any, index: number) => {
-            const conditionPotion = item.user_id === 8 ? 'justify-end' : 'justify-start'
-            const conditionBackground =
-              item.user_id === 8 ? 'bg-mainblue text-white' : 'bg-slate-300'
-            return (
-              <div key={index} className={`py-3 flex ${conditionPotion}`}>
-                <span className={`rounded-3xl  px-4 py-2 ${conditionBackground}`}>
-                  {item.message_content}
-                </span>
-              </div>
-            )
-          })}
+          {chatlist?.length > 0 &&
+            chatlist.map((item: Chat, index: number) => {
+              const conditionPotion = item.user_id === userId ? 'justify-end' : 'justify-start'
+              const conditionBackground =
+                item.user_id === 8 ? 'bg-mainblue text-white' : 'bg-slate-300'
+              return (
+                <div key={index} className={`py-3 flex ${conditionPotion}`}>
+                  <span className={`rounded-3xl  px-4 py-2 ${conditionBackground}`}>
+                    {item.message_content}
+                  </span>
+                </div>
+              )
+            })}
         </div>
       </div>
       <div className="py-2 insent-x-0 bottom-0  lg:flex lg:justify-between items-stretch">
-        <input type="text" placeholder="Text Message" className="px-3 py-3 w-full " />
+        <input
+          type="text"
+          placeholder="Text Message"
+          value={message}
+          onChange={handleMessageChange}
+          className="px-3 py-3 w-full "
+        />
         <Button
-          className="ml-2 bg-slate-300 rounded-md text-slate-500 self-center"
-          onClick={() => {}}
+          className="ml-2 bg-slate-300 rounded-md text-slate-500 self-center "
+          onClick={() => {
+            message && handlePressSend()
+          }}
         >
           Send
         </Button>

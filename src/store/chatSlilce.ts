@@ -2,32 +2,34 @@ import { createSlice } from '@reduxjs/toolkit'
 import { AppState } from './store'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-export interface ChatState {
-  user: string[]
-  the_other_user: string[]
+export interface Chat {
+  contact_id?: number
+  user_id: number
+  provider_id: number
+  who: string
+  message_content: string
+  date_sent: string | Date
+}
+interface ChatList {
+  chatlist: Chat[]
 }
 
-const initialState: ChatState = {
-  user: [],
-  the_other_user: [],
+const initialState: ChatList = {
+  chatlist: [],
 }
 
 export const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    setUserChatState(state = initialState, action: PayloadAction<string[]>) {
-      state.user = action.payload
-    },
-    setTheOtherUserChatState(state = initialState, action: PayloadAction<string[]>) {
-      state.the_other_user = action.payload
+    setChatListState(state = initialState, action: PayloadAction<Chat[]>) {
+      state.chatlist = action.payload
     },
   },
 })
 
-export const { setUserChatState, setTheOtherUserChatState } = chatSlice.actions
+export const { setChatListState } = chatSlice.actions
 
-export const selectUserChatState = (state: AppState) => state.chat.user
-export const selectTheOtherUserChatState = (state: AppState) => state.chat.the_other_user
+export const selectChatListState = (state: AppState) => state.chat.chatlist
 
 export const chatReducer = chatSlice.reducer
