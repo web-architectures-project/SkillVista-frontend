@@ -78,9 +78,7 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
         />
       )}
 
-      <div className="relative h-screen">
-        <ChatBox />
-
+      <div className="relative h-screen"></div>
         <div>
           {/* <FullScreenSearchBar
             queryData={fetchedData}
