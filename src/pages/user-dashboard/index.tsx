@@ -11,11 +11,11 @@ import { getCookies, setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
-import { DataTable } from '@/components/user-dashboard/DataTable'
 import { TUserDashboardTable, columns } from '@/components/user-dashboard/columns'
 import { DummyData } from '@/lib/utils/UserDashboardData'
 import { apiRequest } from '@/components/apis/default'
 import { METHODS } from '@/lib/utils/ApiMethods'
+import DataCards from '@/components/user-dashboard/DataCards'
 
 interface IndexProps {
   consent: boolean
@@ -34,6 +34,7 @@ type ServiceAvailability = {
   provider_id: number
   service_id: number
   service_type_id: number
+  status: number
 }
 
 export default function Index({ consent }: IndexProps): JSX.Element {
@@ -44,8 +45,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const [fetchedData, setFetchedData] = useState({})
   const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
   const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
-  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] =
-    useState<ServiceAvailability[]>()
+  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState()
   const [providerName, setProviderName] = useState('')
 
   const serviceDataFromSearch: TUserDashboardTable[] = useMemo(() => {
@@ -85,7 +85,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const getServicesUsingSearch = async (searchQuery: string) => {
     try {
       const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
-      setServiceDataFromSearchInput(serviceData)
+      if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
     } catch (err) {
       console.log(err)
     }
@@ -187,12 +187,13 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             fetchDataOnEnter={fetchDataOnEnter}
             toggle={DummyData ? true : false}
           />
-          <DataTable
+          {/* <DataTable
             columns={columns}
             data={servicesToBeUsed}
             query={query}
             queryData={fetchedData}
-          />
+          /> */}
+          <DataCards data={servicesToBeUsed} />
         </div>
       </div>
     </main>
