@@ -91,6 +91,10 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     }
   }
 
+  // const handleDeleteService = async () => {
+
+  // }
+
   useEffect(() => {
     if (!serviceData) getServiceData()
   }, [serviceData])
@@ -122,9 +126,10 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   }, [serviceData])
 
   useEffect(() => {
+    console.log('This is working!!!')
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
     else setServicesTobeUsed(serviceDataFromSearch)
-  }, [serviceDataFromSearch, regularServiceData])
+  }, [serviceDataFromSearch, regularServiceData, serviceDataFromSearchInput])
 
   /* Cookie-consent check & Modal */
   useEffect(() => {
@@ -169,7 +174,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         <Modal
           title={'Cookie Consent'}
           content={
-            'This website use cookies to help you have a superior and more admissible browsing experience on the website.'
+            'This website use cookies to help you have a superior and more admissible browsing experience on the website .'
           }
           rightButton={'Decline'}
           leftButton={'Accept'}
@@ -187,12 +192,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             fetchDataOnEnter={fetchDataOnEnter}
             toggle={DummyData ? true : false}
           />
-          {/* <DataTable
-            columns={columns}
-            data={servicesToBeUsed}
-            query={query}
-            queryData={fetchedData}
-          /> */}
           <DataCards data={servicesToBeUsed} />
         </div>
       </div>
