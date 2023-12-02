@@ -44,8 +44,9 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const [fetchedData, setFetchedData] = useState({})
   const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
   const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
-  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] =
-    useState<ServiceAvailability[]>()
+  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState<
+    ServiceAvailability[]
+  >()
   const [providerName, setProviderName] = useState('')
 
   const serviceDataFromSearch: TUserDashboardTable[] = useMemo(() => {

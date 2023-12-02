@@ -3,10 +3,10 @@ import * as React from 'react'
 export interface DialogProps {
   title: string
   content: string
-  leftButton: string
-  rightButton: string
-  rightFunc: () => void
-  leftFunc: () => void
+  leftButton?: string
+  rightButton?: string
+  rightFunc?: () => void
+  leftFunc?: () => void
 }
 
 const Modal = ({ rightButton, leftButton, content, title, rightFunc, leftFunc }: DialogProps) => {
@@ -23,18 +23,22 @@ const Modal = ({ rightButton, leftButton, content, title, rightFunc, leftFunc }:
             <p className="text-sm text-gray-500 px-8">{content}</p>
           </div>
           <div className="p-3  mt-2 text-center space-x-4 md:block">
-            <button
-              onClick={() => leftFunc()}
-              className="mb-2 md:mb-0 bg-mainblue borde px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-mainblue"
-            >
-              {leftButton}
-            </button>
-            <button
-              onClick={() => rightFunc()}
-              className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100"
-            >
-              {rightButton}
-            </button>
+            {leftButton && (
+              <button
+                onClick={() => leftFunc && leftFunc()}
+                className="mb-2 md:mb-0 bg-mainblue borde px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-mainblue"
+              >
+                {leftButton}
+              </button>
+            )}
+            {rightButton && (
+              <button
+                onClick={() => rightFunc && rightFunc()}
+                className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100"
+              >
+                {rightButton}
+              </button>
+            )}
           </div>
         </div>
       </div>

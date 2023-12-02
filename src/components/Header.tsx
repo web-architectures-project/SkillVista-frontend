@@ -24,7 +24,7 @@ const Header = () => {
         dispatch(setUserId(res?.userId))
       })
     }
-  }, [dispatch])
+  }, [])
 
   const handleToggle = () => {
     setToggle(toggle => !toggle)
@@ -74,7 +74,10 @@ const Header = () => {
 
       <div className="items-center w-auto hidden md:flex">
         <div className="md:flex-grow md:content-center">
-          <Link href="/provider-registration" className="inline-block mr-4">
+          <Link
+            href={authState ? '/provider-registration' : '/user-login'}
+            className="inline-block mr-4"
+          >
             Become a Provider
           </Link>
           {authState ? (
@@ -108,7 +111,10 @@ const Header = () => {
       {toggle && (
         <div className="md:flex lg:items-center md:w-auto w-full block items-center">
           <div className="md:flex-grow text-end">
-            <Link href="/provider-registration" className="block mt-4 md:inline-block lg:mt-0 mr-4">
+            <Link
+              href={authState ? '/provider-registration' : '/user-login'}
+              className="block mt-4 md:inline-block lg:mt-0 mr-4"
+            >
               Become a Provider
             </Link>
             {authState ? (
