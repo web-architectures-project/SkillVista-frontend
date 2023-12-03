@@ -11,7 +11,7 @@ import { getCookies, setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
-import { TUserDashboardTable, columns } from '@/components/user-dashboard/columns'
+import { TUserDashboardTable } from '@/components/user-dashboard/columns'
 import { DummyData } from '@/lib/utils/UserDashboardData'
 import { apiRequest } from '@/components/apis/default'
 import { METHODS } from '@/lib/utils/ApiMethods'
@@ -104,6 +104,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
       getProviderNameFromId(service.provider_id)
       serviceDataFromSearch?.push({
         service_id: String(service.service_id),
+        provider_id: String(service?.provider_id),
         short_description: service?.description,
         provider: providerName,
         availability: service?.availability,
@@ -118,6 +119,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
       getProviderNameFromId(service.provider_id)
       regularServiceData?.push({
         service_id: String(service.service_id),
+        provider_id: String(service?.provider_id),
         availability: service.availability,
         pricing: String(service.pricing),
         provider: providerName,
