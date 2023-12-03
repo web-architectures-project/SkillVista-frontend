@@ -39,7 +39,6 @@ type ServiceAvailability = {
 
 export default function Index({ consent }: IndexProps): JSX.Element {
   const [showChat, setShowChat] = useState(false)
-  const [infofromClick, setinfoFromClick] = useState()
   const [cookieModal, setCookieModal] = useState(false)
   // Remove the below when unecessary -1Solon
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

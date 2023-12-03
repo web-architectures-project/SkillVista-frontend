@@ -5,7 +5,6 @@ import { apiRequest } from '../apis/default'
 import { useDispatch, useSelector } from 'react-redux'
 import { Chat, selectChatListState, setChatListState } from '@/store/chatSlilce'
 import { selectUserId } from '@/store/userSlice'
-import { useRouter } from 'next/router'
 
 export interface ChatBoxProps {
   handleChatBox: () => void
@@ -13,12 +12,10 @@ export interface ChatBoxProps {
   providername: string
 }
 
-const ChatBox = ({ handleChatBox, providerId, providername }: ChatBoxProps) => {
+const ChatBox = ({ handleChatBox, providername }: ChatBoxProps) => {
   const chatlist = useSelector(selectChatListState)
 
-  const testProvidername = 'call203'
   const testProviderId = 2
-  const router = useRouter()
   // const userId = 8
 
   const userId = useSelector(selectUserId)
