@@ -3,7 +3,7 @@
 // import { columns } from '@/components/user-dashboard/columns'
 // import { DummyData } from '@/lib/utils/UserDashboardData'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
 import { useRouter } from 'next/router'
 import { getCookies, setCookie } from 'cookies-next'
@@ -11,6 +11,12 @@ import { getCookies, setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { ChatBox } from '@/components/user-dashboard/chatbox'
+import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
+import { DataTable } from '@/components/user-dashboard/DataTable'
+import { TUserDashboardTable, columns } from '@/components/user-dashboard/columns'
+import { DummyData } from '@/lib/utils/UserDashboardData'
+import { apiRequest } from '@/components/apis/default'
+import { METHODS } from '@/lib/utils/ApiMethods'
 
 interface IndexProps {
   consent: boolean
@@ -21,12 +27,108 @@ interface ServerSideProps {
   req: NextApiRequest
 }
 
-const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
+type ServiceAvailability = {
+  availability: string
+  date_created: string
+  description: string
+  pricing: number
+  provider_id: number
+  service_id: number
+  service_type_id: number
+}
+
+export default function Index({ consent }: IndexProps): JSX.Element {
+  const [showChat, setShowChat] = useState(false)
+  const [infofromClick, setinfoFromClick] = useState()
   const [cookieModal, setCookieModal] = useState(false)
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
+  const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
+  const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
+  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState<
+    ServiceAvailability[]
+  >()
+  const [providerName, setProviderName] = useState('')
+
+  const serviceDataFromSearch: TUserDashboardTable[] = useMemo(() => {
+    return []
+  }, [])
+
+  const regularServiceData: TUserDashboardTable[] = useMemo(() => {
+    return []
+  }, [])
+
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const authState = useSelector(selectAuthState)
+
+  const getServiceData = async () => {
+    try {
+      const serviceData = await apiRequest({ method: METHODS.GET, path: '/services' })
+      setServiceData(serviceData?.message)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const getProviderNameFromId = async (providerId: number) => {
+    try {
+      const provider = await apiRequest({
+        method: METHODS.GET,
+        path: `/users/${String(providerId)}`,
+      })
+      setProviderName(provider?.message?.username)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const getServicesUsingSearch = async (searchQuery: string) => {
+    try {
+      const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
+      setServiceDataFromSearchInput(serviceData)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    if (!serviceData) getServiceData()
+  }, [serviceData])
+
+  useEffect(() => {
+    serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
+      getProviderNameFromId(service.provider_id)
+      serviceDataFromSearch?.push({
+        short_description: service?.description,
+        provider: providerName,
+        availability: service?.availability,
+        pricing: String(service?.pricing),
+      })
+    })
+    console.log(serviceDataFromSearch)
+  }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
+
+  useEffect(() => {
+    serviceData?.map(service => {
+      getProviderNameFromId(service.provider_id)
+      regularServiceData?.push({
+        availability: service.availability,
+        pricing: String(service.pricing),
+        provider: providerName,
+        short_description: service.description,
+      })
+      console.log(regularServiceData)
+    })
+  }, [serviceData])
+
+  useEffect(() => {
+    if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
+    else setServicesTobeUsed(serviceDataFromSearch)
+  }, [serviceDataFromSearch, regularServiceData])
 
   /* Cookie-consent check & Modal */
   useEffect(() => {
@@ -47,9 +149,11 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
     setCookieModal(false)
   }
 
+  // Remove the below when unecessary -1Solon
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchDataOnEnter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setFetchedData(data?.data)
+    getServicesUsingSearch(query)
   }
 
   useEffect(() => {
@@ -58,9 +162,21 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
 
   // useEffect to check user authentication and redirect if not authenticated
   useEffect(() => {
-    // if (!authState) router.push("user-login");
+    // if (!authState) router.push('user-login')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState])
+
+  const handleChatBox = () => {
+    setShowChat(!showChat)
+  }
+
+  // const handleClickedInfo = info => {
+  //   console.log('hi')
+  //   console.log(servicesToBeUsed)
+  //   if (servicesToBeUsed && servicesToBeUsed.length > 0) {
+  //     setinfoFromClick(servicesToBeUsed[0])
+  //   }
+  // }
 
   return (
     // Main container for the component
@@ -78,29 +194,27 @@ const Index: FC<IndexProps> = ({ consent }: IndexProps) => {
         />
       )}
 
-      <div className="relative h-screen"></div>
+      <div className="relative h-screen">
+        {!showChat && <ChatBox handleChatBox={handleChatBox} clickedInfo={servicesToBeUsed[0]} />}
         <div>
-          {/* <FullScreenSearchBar
+          <FullScreenSearchBar
             queryData={fetchedData}
             query={query}
             setQuery={setQuery}
             fetchDataOnEnter={fetchDataOnEnter}
-          /> */}
-
-          {/* <DataTable
+            toggle={DummyData ? true : false}
+          />
+          <DataTable
             columns={columns}
-            data={DummyData}
+            data={servicesToBeUsed}
             query={query}
             queryData={fetchedData}
-          /> */}
+          />
         </div>
       </div>
     </main>
   )
 }
-
-// Export the Index component as the default export
-export default Index
 
 export async function getServerSideProps({ req, res }: ServerSideProps) {
   const data = getCookies({ req, res })

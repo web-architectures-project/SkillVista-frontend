@@ -27,7 +27,7 @@ const Index: FC<IndexProps> = () => {
   const router = useRouter()
   const userId = useSelector(selectUserId)
   const [error, setError] = useState<string[] | string>()
-  const [profileImg, setProfileImg] = useState<File | null>()
+  //const [profileImg, setProfileImg] = useState<File | null>()
   const [changedImage, setChangedImage] = useState<string | ArrayBuffer | null>()
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const [serviceType, setServiceType] = useState<listProps[]>([])
@@ -65,7 +65,7 @@ const Index: FC<IndexProps> = () => {
         formik.setFieldValue('serviceType', res.message[0]?.service_name)
       }
     })
-  }, [])
+  }, [formik])
 
   const handleSuccessModal = () => {
     setSuccessModal(!successModal)
@@ -98,11 +98,11 @@ const Index: FC<IndexProps> = () => {
       return
     }
 
-    if (!event.target.files && fileUploaded.length > 0) {
+    if (!event.target.files) {
       return
     }
 
-    setProfileImg(fileUploaded)
+    // setProfileImg(fileUploaded)
 
     const fileReader = new FileReader()
     fileReader.addEventListener('load', () => {

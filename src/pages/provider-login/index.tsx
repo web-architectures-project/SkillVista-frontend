@@ -1,7 +1,3 @@
-import { FC } from 'react'
-
-interface indexProps {}
-
-export const index: FC<indexProps> = () => {
+export default function index() {
   return <div>Provider Login</div>
 }

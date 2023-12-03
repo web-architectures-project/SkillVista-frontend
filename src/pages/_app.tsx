@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { AppProps } from 'next/app'
 import { Provider } from 'react-redux'
 
-function App({ Component, ...rest }: AppProps) {
+export default function App({ Component, ...rest }: AppProps) {
   const queryClient = new QueryClient()
   const { store, props } = wrapper.useWrappedStore(rest)
   return (
@@ -19,5 +19,3 @@ function App({ Component, ...rest }: AppProps) {
     </Provider>
   )
 }
-
-export default App
