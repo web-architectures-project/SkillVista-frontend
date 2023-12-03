@@ -8,7 +8,7 @@ import { useFormik } from 'formik'
 import Image from 'next/image'
 import { listProps } from '@/components/ui/select'
 
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import * as Yup from 'yup'
 import { useSelector } from 'react-redux'
 import { selectUserId } from '@/store/userSlice'
@@ -27,8 +27,8 @@ const Index: FC<IndexProps> = () => {
   const router = useRouter()
   const userId = useSelector(selectUserId)
   const [error, setError] = useState<string[] | string>()
-  //const [profileImg, setProfileImg] = useState<File | null>()
-  const [changedImage, setChangedImage] = useState<string | ArrayBuffer | null>()
+  const [profileImg, setProfileImg] = useState<File | null>()
+  const [changedImage, setChangedImage] = useState<string | null>()
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const [serviceType, setServiceType] = useState<listProps[]>([])
   const [successModal, setSuccessModal] = useState(false)
@@ -36,7 +36,7 @@ const Index: FC<IndexProps> = () => {
   const RegistrationSchema = Yup.object().shape({
     title: Yup.string().required('Required'),
     description: Yup.string().max(1000, 'Too Long!').required('Required'),
-    price: Yup.number().required('Required'),
+    price: Yup.number().min(0, 'Too cheap!').max(1000000, 'Too expensive!').required('Required'),
     serviceType: Yup.string().required('Required'),
     availability: Yup.string().max(255, 'Too Long!').required('Required'),
   })
@@ -55,7 +55,7 @@ const Index: FC<IndexProps> = () => {
     },
   })
 
-  useEffect(() => {
+  const getServiceType = useCallback(() => {
     apiRequest({
       method: 'GET',
       path: 'service-types',
@@ -65,7 +65,11 @@ const Index: FC<IndexProps> = () => {
         formik.setFieldValue('serviceType', res.message[0]?.service_name)
       }
     })
-  }, [formik])
+  }, [])
+
+  useEffect(() => {
+    getServiceType()
+  }, [getServiceType])
 
   const handleSuccessModal = () => {
     setSuccessModal(!successModal)
@@ -75,12 +79,6 @@ const Index: FC<IndexProps> = () => {
     if (hiddenFileInput.current) {
       hiddenFileInput.current.click()
     }
-  }
-
-  let imageUrl = ''
-  if (changedImage) {
-    const blob = new Blob([changedImage], { type: 'image/jpeg' })
-    imageUrl = URL.createObjectURL(blob)
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,11 +100,10 @@ const Index: FC<IndexProps> = () => {
       return
     }
 
-    // setProfileImg(fileUploaded)
-
+    setProfileImg(fileUploaded)
     const fileReader = new FileReader()
     fileReader.addEventListener('load', () => {
-      return setChangedImage(fileReader?.result)
+      return setChangedImage(fileReader?.result as string)
     })
 
     fileReader.readAsDataURL(fileUploaded)
@@ -114,7 +111,7 @@ const Index: FC<IndexProps> = () => {
 
   const createService = () => {
     const serviceTypeId = serviceType.find(item => item.service_name === formik.values.serviceType)
-    handleSuccessModal()
+
     apiRequest({
       method: 'POST',
       path: 'services',
@@ -128,17 +125,31 @@ const Index: FC<IndexProps> = () => {
       },
     }).then(res => {
       if (res?.status === 200) {
-        handleSuccessModal()
+        const service_id = res?.message
+        if (profileImg) {
+          apiRequest({
+            method: 'POST',
+            path: `services/image/${service_id}`,
+            body: { file: profileImg },
+            header: {
+              headers: {
+                'content-type': 'multipart/form-data',
+              },
+            },
+          }).then(res => {
+            if (res?.status === 201) {
+              handleSuccessModal()
+            }
+          })
+        } else {
+          handleSuccessModal()
+        }
       } else {
         setError(res?.message)
       }
     })
   }
 
-  const modalRightFunc = () => {
-    router.push('/provider-service')
-    handleSuccessModal()
-  }
   const modalLeftFunc = () => {
     router.push('/user-dashboard')
     handleSuccessModal()
@@ -166,32 +177,31 @@ const Index: FC<IndexProps> = () => {
               content={
                 'Your service has been successfully created. You can check your service in the service page.'
               }
-              rightButton={'Go to Service Page'}
               leftButton={'Go to Home'}
-              rightFunc={modalRightFunc}
               leftFunc={modalLeftFunc}
             />
           )}
+
+          <div className="pb-3 flex justify-center">
+            <Image
+              src={changedImage ? changedImage : '/upload.png'}
+              width={180}
+              height={180}
+              alt="Picture of the author"
+            />
+          </div>
+          <div className="pb-5 flex justify-center">
+            <Button onClick={handleClick} className="bg-mainblue hover:bg-slate-300">
+              Upload a file
+            </Button>
+            <input
+              type="file"
+              onChange={handleFileUpload}
+              ref={hiddenFileInput}
+              style={{ display: 'none' }}
+            />
+          </div>
           <form onSubmit={formik?.handleSubmit}>
-            <div className="pb-3 flex justify-center">
-              <Image
-                src={changedImage ? imageUrl : '/upload.png'}
-                width={180}
-                height={180}
-                alt="Picture of the author"
-              />
-            </div>
-            <div className="pb-5 flex justify-center">
-              <Button onClick={handleClick} className="bg-mainblue hover:bg-slate-300">
-                Upload a file
-              </Button>
-              <input
-                type="file"
-                onChange={handleFileUpload}
-                ref={hiddenFileInput}
-                style={{ display: 'none' }}
-              />
-            </div>
             <div className="pb-3">
               <Label>Title</Label>
               <Input

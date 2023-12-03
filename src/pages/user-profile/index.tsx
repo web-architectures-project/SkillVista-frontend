@@ -114,6 +114,21 @@ export default function Index() {
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const fileUploaded = event.target.files?.[0]
+    if (!fileUploaded) return
+
+    if (fileUploaded.size > 1000000) {
+      alert('File size should be less than 1MB')
+      return
+    }
+
+    if (!fileUploaded.type.includes('image')) {
+      alert('Only image files are allowed')
+      return
+    }
+
+    if (!event.target.files) {
+      return
+    }
     setProfileImg(fileUploaded)
 
     const fileReader = new FileReader()
