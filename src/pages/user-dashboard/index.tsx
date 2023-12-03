@@ -17,7 +17,7 @@ import { apiRequest } from '@/components/apis/default'
 import { METHODS } from '@/lib/utils/ApiMethods'
 import DataCards from '@/components/user-dashboard/DataCards'
 import { ChatBox } from '@/components/user-dashboard/chatbox'
-
+import { selectUserType } from '@/store/userSlice'
 interface IndexProps {
   consent: boolean
 }
@@ -42,6 +42,8 @@ type ServiceAvailability = {
 export default function Index({ consent }: IndexProps): JSX.Element {
   const [showChat, setShowChat] = useState(false)
   const [cookieModal, setCookieModal] = useState(false)
+  const [contactInfo, setContactInfo] = useState<TUserDashboardTable>()
+  const userType = useSelector(selectUserType)
   // Remove the below when unecessary -1Solon
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [query, setQuery] = useState('')
@@ -183,13 +185,9 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     setShowChat(!showChat)
   }
 
-  // const handleClickedInfo = info => {
-  //   console.log('hi')
-  //   console.log(servicesToBeUsed)
-  //   if (servicesToBeUsed && servicesToBeUsed.length > 0) {
-  //     setinfoFromClick(servicesToBeUsed[0])
-  //   }
-  // }
+  const handleClickInfoForChat = (info: TUserDashboardTable) => {
+    setContactInfo(info)
+  }
 
   return (
     // Main container for the component
@@ -208,7 +206,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
       )}
 
       <div className="relative h-screen">
-        {!showChat && <ChatBox handleChatBox={handleChatBox} clickedInfo={servicesToBeUsed[0]} />}
+        {showChat && <ChatBox handleChatBox={handleChatBox} contactInfo={contactInfo} />}
         <div>
           <FullScreenSearchBar
             queryData={fetchedData}
@@ -217,7 +215,12 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             fetchDataOnEnter={fetchDataOnEnter}
             toggle={DummyData ? true : false}
           />
-          <DataCards data={servicesToBeUsed} />
+          <DataCards
+            data={servicesToBeUsed}
+            userType={userType}
+            handleClickInfoForChat={handleClickInfoForChat}
+            clickChat={handleChatBox}
+          />
         </div>
       </div>
     </main>
