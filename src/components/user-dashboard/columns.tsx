@@ -10,10 +10,13 @@ import { ColumnDef } from '@tanstack/react-table'
 
 export type TUserDashboardTable = {
   //   Provider is mainly what (global eg. Plumber, Electrician, etc) service do they provide
+  service_id: string
+  provider_id: string
   provider: string
   short_description: string
   pricing: string
   availability: string
+  service_image_url: string
 }
 
 export const columns: ColumnDef<TUserDashboardTable>[] = [
