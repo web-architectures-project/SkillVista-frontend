@@ -103,6 +103,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
       getProviderNameFromId(service.provider_id)
       serviceDataFromSearch?.push({
+        service_id: String(service.service_id),
         short_description: service?.description,
         provider: providerName,
         availability: service?.availability,
@@ -116,6 +117,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     serviceData?.map(service => {
       getProviderNameFromId(service.provider_id)
       regularServiceData?.push({
+        service_id: String(service.service_id),
         availability: service.availability,
         pricing: String(service.pricing),
         provider: providerName,
