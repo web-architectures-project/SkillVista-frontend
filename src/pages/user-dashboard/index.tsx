@@ -35,6 +35,7 @@ type ServiceAvailability = {
   service_id: number
   service_type_id: number
   status: number
+  service_image_url: string
 }
 
 export default function Index({ consent }: IndexProps): JSX.Element {
@@ -102,6 +103,8 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   useEffect(() => {
     serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
       getProviderNameFromId(service.provider_id)
+      console.log(serviceDataFromSearchInput)
+
       serviceDataFromSearch?.push({
         service_id: String(service.service_id),
         provider_id: String(service?.provider_id),
@@ -109,9 +112,11 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         provider: providerName,
         availability: service?.availability,
         pricing: String(service?.pricing),
+        service_image_url: '',
       })
     })
     console.log(serviceDataFromSearch)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
 
   useEffect(() => {
@@ -124,6 +129,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         pricing: String(service.pricing),
         provider: providerName,
         short_description: service.description,
+        service_image_url: '',
       })
       console.log(regularServiceData)
     })

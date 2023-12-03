@@ -16,6 +16,7 @@ export type TUserDashboardTable = {
   short_description: string
   pricing: string
   availability: string
+  service_image_url: string
 }
 
 export const columns: ColumnDef<TUserDashboardTable>[] = [

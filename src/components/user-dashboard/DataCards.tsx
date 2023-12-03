@@ -39,7 +39,7 @@ export default function DataCards({ data }: IProps) {
               {true ? (
                 <>
                   <div className="flex space-x-5">
-                    <Button>Add Service</Button>
+                    <Button>Contact</Button>
                     <Button>Delete Service</Button>
                   </div>
                 </>
