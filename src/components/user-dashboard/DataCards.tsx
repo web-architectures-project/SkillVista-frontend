@@ -9,7 +9,7 @@ import {
 import { TUserDashboardTable } from './columns'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
-import { Button } from '../ui/button'
+// import { Button } from '../ui/button'
 
 interface IProps {
   data: TUserDashboardTable[]
@@ -36,7 +36,7 @@ export default function DataCards({ data }: IProps) {
           </CardContent>
           <CardFooter>
             <div>
-              {true ? (
+              {/* {true ? (
                 <>
                   <div className="flex space-x-5">
                     <Button>Contact</Button>
@@ -47,7 +47,7 @@ export default function DataCards({ data }: IProps) {
                 <>
                   <Button>Contact</Button>
                 </>
-              )}
+              )} */}
             </div>
           </CardFooter>
         </Card>
