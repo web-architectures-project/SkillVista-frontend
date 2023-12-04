@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { setAuthState } from '@/store/authSlice'
 import { getUserProfile, handleToken } from '@/lib/utils'
-import { setProfileId, setUserId, setUserName, setUserState } from '@/store/userSlice'
+import { setProfileId, setUserId, setUserName, setUserState, setUserType } from '@/store/userSlice'
 
 export default function Index() {
   const router = useRouter()
@@ -44,6 +44,7 @@ export default function Index() {
               dispatch(setUserName(res?.username))
               dispatch(setProfileId(res?.profileId))
               dispatch(setUserId(res?.userId))
+              dispatch(setUserType(res?.userType))
             })
             router.push('/user-dashboard')
           })

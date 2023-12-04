@@ -162,7 +162,7 @@ export default function Index() {
               <div className="col-span-2 mt-3 sm:mt-0">
                 <Label>Phone number</Label>
                 <Input
-                  type="number"
+                  type="tel"
                   name="phone_number"
                   placeholder="ex) 0987654322"
                   className="form-input"
