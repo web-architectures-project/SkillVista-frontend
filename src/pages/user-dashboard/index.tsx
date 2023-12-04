@@ -38,6 +38,13 @@ type ServiceAvailability = {
   service_image_url: string
 }
 
+type TServiceDataFromSearch = {
+  status: number
+  message: {
+    searchResult: ServiceAvailability[]
+  }
+}
+
 export default function Index({ consent }: IndexProps): JSX.Element {
   const [cookieModal, setCookieModal] = useState(false)
   // Remove the below when unecessary -1Solon
@@ -46,7 +53,9 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const [fetchedData, setFetchedData] = useState({})
   const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
   const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
-  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState()
+  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState<
+    TServiceDataFromSearch | undefined
+  >()
   const [providerName, setProviderName] = useState('')
 
   const serviceDataFromSearch: TUserDashboardTable[] = useMemo(() => {
