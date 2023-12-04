@@ -126,17 +126,24 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
       getProviderNameFromId(service.provider_id)
       console.log(serviceDataFromSearchInput)
-
-      serviceDataFromSearch?.push({
-        service_id: String(service.service_id),
-        provider_id: String(service?.provider_id),
-        short_description: service?.description,
-        provider: providerName,
-        availability: service?.availability,
-        pricing: String(service?.pricing),
-        service_image_url: '',
-      })
-      console.log(serviceDataFromSearch)
+      if (
+        serviceDataFromSearch?.some(
+          inner_service => inner_service?.service_id == String(service?.service_id),
+        )
+      ) {
+        return
+      } else {
+        serviceDataFromSearch?.push({
+          service_id: String(service.service_id),
+          provider_id: String(service?.provider_id),
+          short_description: service?.description,
+          provider: providerName,
+          availability: service?.availability,
+          pricing: String(service?.pricing),
+          service_image_url: '',
+        })
+        console.log(serviceDataFromSearch)
+      }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
