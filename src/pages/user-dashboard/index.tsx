@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
-import { useRouter } from 'next/router'
 import { getCookies, setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
@@ -65,15 +64,11 @@ export default function Index({ consent }: IndexProps): JSX.Element {
 
   // Remove the below when unecessary -1Solon
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const router = useRouter()
   const authState = useSelector(selectAuthState)
-  console.log('Auth State>>>', authState)
 
   const getServiceData = useCallback(async () => {
     try {
       if (authState === true) {
-        console.log('Went till here')
-
         const serviceData = await apiRequest({ method: METHODS.GET, path: '/services' })
         setServiceData(serviceData?.message)
       }
@@ -98,11 +93,10 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     return async event => {
       try {
         // Perform your deletion logic here
-        const response = await apiRequest({
+        await apiRequest({
           method: METHODS.DELETE,
           path: `/services/${service_id}`,
         })
-        console.log(response)
         // Optionally prevent default behavior or stop propagation
         event.preventDefault()
         event.stopPropagation()
@@ -141,7 +135,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     if (serviceDataFromSearchInput) {
       serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
         getProviderNameFromId(service.provider_id)
-        console.log(serviceDataFromSearchInput)
         if (
           !serviceDataFromSearch?.some(
             innerService => innerService.service_id === String(service?.service_id),
