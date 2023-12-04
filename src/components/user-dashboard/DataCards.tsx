@@ -8,6 +8,8 @@ import {
 } from '@/components/ui/card'
 import { TUserDashboardTable } from './columns'
 import { Button } from '../ui/button'
+import { useSelector } from 'react-redux'
+import { selectAuthState } from '@/store/authSlice'
 
 interface IProps {
   data: TUserDashboardTable[]
@@ -17,7 +19,7 @@ interface IProps {
 }
 
 export default function DataCards({ data, userType, clickChat, handleClickInfoForChat }: IProps) {
-  console.log(userType)
+  const authState = useSelector(selectAuthState)
   return (
     <div className="grid grid-cols-4 gap-7">
       {data?.map((service: TUserDashboardTable, Index: number) => (
@@ -33,11 +35,25 @@ export default function DataCards({ data, userType, clickChat, handleClickInfoFo
               <li>Pricing: {service?.pricing}</li>
             </ul>
           </CardContent>
-          <CardFooter>
-            <div>
-              {userType === 'service_provider' ? (
-                <>
-                  <div className="flex space-x-5">
+          {authState && (
+            <CardFooter>
+              <div>
+                {userType === 'service_provider' ? (
+                  <>
+                    <div className="flex space-x-5">
+                      <Button
+                        onClick={() => {
+                          clickChat()
+                          handleClickInfoForChat(service)
+                        }}
+                      >
+                        Contact
+                      </Button>
+                      <Button>Delete Service</Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
                     <Button
                       onClick={() => {
                         clickChat()
@@ -46,23 +62,11 @@ export default function DataCards({ data, userType, clickChat, handleClickInfoFo
                     >
                       Contact
                     </Button>
-                    <Button>Delete Service</Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => {
-                      clickChat()
-                      handleClickInfoForChat(service)
-                    }}
-                  >
-                    Contact
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardFooter>
+                  </>
+                )}
+              </div>
+            </CardFooter>
+          )}
         </Card>
       ))}
     </div>

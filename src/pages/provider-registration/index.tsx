@@ -124,7 +124,7 @@ const Index: FC<IndexProps> = () => {
         date_created: new Date(),
       },
     }).then(res => {
-      if (res?.status === 200) {
+      if (res?.status === 201) {
         const service_id = res?.message
         if (profileImg) {
           apiRequest({
