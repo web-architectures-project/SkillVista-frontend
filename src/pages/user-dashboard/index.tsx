@@ -112,8 +112,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   useEffect(() => {
     serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
       getProviderNameFromId(service.provider_id)
-      console.log(serviceDataFromSearchInput)
-
       serviceDataFromSearch?.push({
         service_id: String(service.service_id),
         provider_id: String(service?.provider_id),
@@ -123,8 +121,8 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         pricing: String(service?.pricing),
         service_image_url: '',
       })
+      console.log(serviceDataFromSearch)
     })
-    console.log(serviceDataFromSearch)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
 
@@ -145,10 +143,18 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   }, [serviceData])
 
   useEffect(() => {
-    console.log('This is working!!!')
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
     else setServicesTobeUsed(serviceDataFromSearch)
   }, [serviceDataFromSearch, regularServiceData, serviceDataFromSearchInput])
+
+  useEffect(() => {
+    if (!serviceData) getServiceData()
+  }, [serviceData])
+
+  useEffect(() => {
+    if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
+    else setServicesTobeUsed(serviceDataFromSearch)
+  }, [serviceDataFromSearch, regularServiceData])
 
   /* Cookie-consent check & Modal */
   useEffect(() => {
