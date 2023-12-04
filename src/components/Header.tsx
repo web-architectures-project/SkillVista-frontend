@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { selectAuthState, setAuthState } from '@/store/authSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteCookie, getCookie } from 'cookies-next'
-import { setUserName, setUserState, setProfileId, setUserId } from '@/store/userSlice'
+import { setUserName, setUserState, setProfileId, setUserId, setUserType } from '@/store/userSlice'
 import { getUserProfile } from '@/lib/utils'
 
 const Header = () => {
@@ -22,6 +22,7 @@ const Header = () => {
         dispatch(setUserName(res?.username))
         dispatch(setProfileId(res?.profileId))
         dispatch(setUserId(res?.userId))
+        dispatch(setUserType(res?.userType))
       })
     }
   }, [])

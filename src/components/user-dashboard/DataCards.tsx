@@ -7,21 +7,20 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { TUserDashboardTable } from './columns'
-import { useSelector } from 'react-redux'
-import { selectAuthState } from '@/store/authSlice'
-// import { Button } from '../ui/button'
+import { Button } from '../ui/button'
 
 interface IProps {
   data: TUserDashboardTable[]
+  userType: string
+  clickChat: () => void
+  handleClickInfoForChat: (value: TUserDashboardTable) => void
 }
 
-export default function DataCards({ data }: IProps) {
-  const authState = useSelector(selectAuthState)
-  console.log(authState)
-
+export default function DataCards({ data, userType, clickChat, handleClickInfoForChat }: IProps) {
+  console.log(userType)
   return (
     <div className="grid grid-cols-4 gap-7">
-      {data?.map((service, Index) => (
+      {data?.map((service: TUserDashboardTable, Index: number) => (
         <Card key={Index}>
           <CardHeader>
             <CardTitle>Service</CardTitle>
@@ -36,18 +35,32 @@ export default function DataCards({ data }: IProps) {
           </CardContent>
           <CardFooter>
             <div>
-              {/* {true ? (
+              {userType === 'service_provider' ? (
                 <>
                   <div className="flex space-x-5">
-                    <Button>Contact</Button>
+                    <Button
+                      onClick={() => {
+                        clickChat()
+                        handleClickInfoForChat(service)
+                      }}
+                    >
+                      Contact
+                    </Button>
                     <Button>Delete Service</Button>
                   </div>
                 </>
               ) : (
                 <>
-                  <Button>Contact</Button>
+                  <Button
+                    onClick={() => {
+                      clickChat()
+                      handleClickInfoForChat(service)
+                    }}
+                  >
+                    Contact
+                  </Button>
                 </>
-              )} */}
+              )}
             </div>
           </CardFooter>
         </Card>
