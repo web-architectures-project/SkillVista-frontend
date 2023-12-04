@@ -1,5 +1,5 @@
 /*Homepage : user-dashboard*/
-export function Home() {
+export default function Home() {
   return (
     <>
       <main></main>

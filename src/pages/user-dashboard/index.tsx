@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
 import { TUserDashboardTable } from '@/components/user-dashboard/columns'
-import { DummyData } from '@/lib/utils/UserDashboardData'
 import { apiRequest } from '@/components/apis/default'
 import { METHODS } from '@/lib/utils/ApiMethods'
 import DataCards from '@/components/user-dashboard/DataCards'
@@ -39,6 +38,13 @@ type ServiceAvailability = {
   service_image_url: string
 }
 
+type TServiceDataFromSearch = {
+  status: number
+  message: {
+    searchResult: ServiceAvailability[]
+  }
+}
+
 export default function Index({ consent }: IndexProps): JSX.Element {
   const [showChat, setShowChat] = useState(false)
   const [cookieModal, setCookieModal] = useState(false)
@@ -50,7 +56,9 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const [fetchedData, setFetchedData] = useState({})
   const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
   const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
-  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState()
+  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState<
+    TServiceDataFromSearch | undefined
+  >()
   const [providerName, setProviderName] = useState('')
 
   const serviceDataFromSearch: TUserDashboardTable[] = useMemo(() => {
@@ -91,14 +99,11 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     try {
       const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
       if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
+      if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
     } catch (err) {
       console.log(err)
     }
   }
-
-  // const handleDeleteService = async () => {
-
-  // }
 
   useEffect(() => {
     if (!serviceData) getServiceData()
@@ -118,8 +123,8 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         pricing: String(service?.pricing),
         service_image_url: '',
       })
+      console.log(serviceDataFromSearch)
     })
-    console.log(serviceDataFromSearch)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
 
@@ -140,7 +145,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   }, [serviceData])
 
   useEffect(() => {
-    console.log('This is working!!!')
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
     else setServicesTobeUsed(serviceDataFromSearch)
   }, [serviceDataFromSearch, regularServiceData, serviceDataFromSearchInput])
@@ -213,7 +217,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             query={query}
             setQuery={setQuery}
             fetchDataOnEnter={fetchDataOnEnter}
-            toggle={DummyData ? true : false}
+            toggle={servicesToBeUsed ? true : false}
           />
           <DataCards
             data={servicesToBeUsed}
