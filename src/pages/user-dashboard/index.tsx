@@ -11,12 +11,13 @@ import { getCookies, setCookie } from 'cookies-next'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
-import { DataTable } from '@/components/user-dashboard/DataTable'
-import { TUserDashboardTable, columns } from '@/components/user-dashboard/columns'
+import { TUserDashboardTable } from '@/components/user-dashboard/columns'
 import { DummyData } from '@/lib/utils/UserDashboardData'
 import { apiRequest } from '@/components/apis/default'
 import { METHODS } from '@/lib/utils/ApiMethods'
-
+import DataCards from '@/components/user-dashboard/DataCards'
+import { ChatBox } from '@/components/user-dashboard/chatbox'
+import { selectUserType } from '@/store/userSlice'
 interface IndexProps {
   consent: boolean
 }
@@ -34,19 +35,22 @@ type ServiceAvailability = {
   provider_id: number
   service_id: number
   service_type_id: number
+  status: number
+  service_image_url: string
 }
 
 export default function Index({ consent }: IndexProps): JSX.Element {
+  const [showChat, setShowChat] = useState(false)
   const [cookieModal, setCookieModal] = useState(false)
+  const [contactInfo, setContactInfo] = useState<TUserDashboardTable>()
+  const userType = useSelector(selectUserType)
   // Remove the below when unecessary -1Solon
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [query, setQuery] = useState('')
   const [fetchedData, setFetchedData] = useState({})
   const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
   const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
-  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState<
-    ServiceAvailability[]
-  >()
+  const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState()
   const [providerName, setProviderName] = useState('')
 
   const serviceDataFromSearch: TUserDashboardTable[] = useMemo(() => {
@@ -86,11 +90,15 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const getServicesUsingSearch = async (searchQuery: string) => {
     try {
       const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
-      setServiceDataFromSearchInput(serviceData)
+      if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
     } catch (err) {
       console.log(err)
     }
   }
+
+  // const handleDeleteService = async () => {
+
+  // }
 
   useEffect(() => {
     if (!serviceData) getServiceData()
@@ -99,33 +107,43 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   useEffect(() => {
     serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
       getProviderNameFromId(service.provider_id)
+      console.log(serviceDataFromSearchInput)
+
       serviceDataFromSearch?.push({
+        service_id: String(service.service_id),
+        provider_id: String(service?.provider_id),
         short_description: service?.description,
         provider: providerName,
         availability: service?.availability,
         pricing: String(service?.pricing),
+        service_image_url: '',
       })
     })
     console.log(serviceDataFromSearch)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
 
   useEffect(() => {
     serviceData?.map(service => {
       getProviderNameFromId(service.provider_id)
       regularServiceData?.push({
+        service_id: String(service.service_id),
+        provider_id: String(service?.provider_id),
         availability: service.availability,
         pricing: String(service.pricing),
         provider: providerName,
         short_description: service.description,
+        service_image_url: '',
       })
       console.log(regularServiceData)
     })
   }, [serviceData])
 
   useEffect(() => {
+    console.log('This is working!!!')
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
     else setServicesTobeUsed(serviceDataFromSearch)
-  }, [serviceDataFromSearch, regularServiceData])
+  }, [serviceDataFromSearch, regularServiceData, serviceDataFromSearchInput])
 
   /* Cookie-consent check & Modal */
   useEffect(() => {
@@ -163,6 +181,14 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authState])
 
+  const handleChatBox = () => {
+    setShowChat(!showChat)
+  }
+
+  const handleClickInfoForChat = (info: TUserDashboardTable) => {
+    setContactInfo(info)
+  }
+
   return (
     // Main container for the component
     <main className="container">
@@ -170,7 +196,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         <Modal
           title={'Cookie Consent'}
           content={
-            'This website use cookies to help you have a superior and more admissible browsing experience on the website.'
+            'This website use cookies to help you have a superior and more admissible browsing experience on the website .'
           }
           rightButton={'Decline'}
           leftButton={'Accept'}
@@ -180,6 +206,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
       )}
 
       <div className="relative h-screen">
+        {showChat && <ChatBox handleChatBox={handleChatBox} contactInfo={contactInfo} />}
         <div>
           <FullScreenSearchBar
             queryData={fetchedData}
@@ -188,11 +215,11 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             fetchDataOnEnter={fetchDataOnEnter}
             toggle={DummyData ? true : false}
           />
-          <DataTable
-            columns={columns}
+          <DataCards
             data={servicesToBeUsed}
-            query={query}
-            queryData={fetchedData}
+            userType={userType}
+            handleClickInfoForChat={handleClickInfoForChat}
+            clickChat={handleChatBox}
           />
         </div>
       </div>

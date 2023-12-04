@@ -72,5 +72,6 @@ export const getUserProfile = async ({ token }: handleTokenProps) => {
     username: username,
     profileId: profileId,
     userId: userId,
+    userType: userRes?.message?.user_type,
   }
 }

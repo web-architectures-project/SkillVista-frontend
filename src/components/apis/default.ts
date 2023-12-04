@@ -36,10 +36,8 @@ export async function apiRequest({ method, path, body, header }: apiRequesProps)
     } else if (method === 'DELETE') {
       res = await customAxios.delete(path, body)
     }
-    console.log(res)
     return { status: res?.status || res?.data?.status, message: res?.data }
   } catch (error) {
-    console.log(error)
     if (axios.isAxiosError(error)) {
       // console.log(error.response?.data?.message)
       return {
