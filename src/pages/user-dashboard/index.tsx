@@ -1,13 +1,8 @@
-// import { DataTable } from '@/components/user-dashboard/DataTable'
-// import FullScreenSearchBar from '@/components/user-dashboard/FullScreenSearchBar'
-// import { columns } from '@/components/user-dashboard/columns'
-// import { DummyData } from '@/lib/utils/UserDashboardData'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { useEffect, useMemo, useState } from 'react'
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
 import { useRouter } from 'next/router'
 import { getCookies, setCookie } from 'cookies-next'
-// import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
@@ -92,6 +87,24 @@ export default function Index({ consent }: IndexProps): JSX.Element {
       setProviderName(provider?.message?.username)
     } catch (err) {
       console.log(err)
+    }
+  }
+
+  const handleDeleteService = (service_id: string): MouseEventHandler<HTMLButtonElement> => {
+    return async event => {
+      try {
+        // Perform your deletion logic here
+        const response = await apiRequest({
+          method: METHODS.DELETE,
+          path: `/services/${service_id}`,
+        })
+        console.log(response)
+        // Optionally prevent default behavior or stop propagation
+        event.preventDefault()
+        event.stopPropagation()
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 
@@ -224,6 +237,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             userType={userType}
             handleClickInfoForChat={handleClickInfoForChat}
             clickChat={handleChatBox}
+            handleDeleteService={handleDeleteService}
           />
         </div>
       </div>
