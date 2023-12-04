@@ -34,7 +34,6 @@ const Index: FC<IndexProps> = () => {
   const [successModal, setSuccessModal] = useState(false)
 
   const RegistrationSchema = Yup.object().shape({
-    title: Yup.string().required('Required'),
     description: Yup.string().max(1000, 'Too Long!').required('Required'),
     price: Yup.number().min(0, 'Too cheap!').max(1000000, 'Too expensive!').required('Required'),
     serviceType: Yup.string().required('Required'),
@@ -43,7 +42,6 @@ const Index: FC<IndexProps> = () => {
 
   const formik = useFormik({
     initialValues: {
-      title: '',
       description: '',
       price: 0,
       availability: '',
@@ -202,22 +200,6 @@ const Index: FC<IndexProps> = () => {
             />
           </div>
           <form onSubmit={formik?.handleSubmit}>
-            <div className="pb-3">
-              <Label>Title</Label>
-              <Input
-                type="text"
-                name="title"
-                placeholder="title"
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                className="form-input"
-              />
-              {formik?.errors?.title && formik.touched.title ? (
-                <p className="text-red-400 text-sm mt-1">{formik.errors.title}</p>
-              ) : (
-                ''
-              )}
-            </div>
             <div className="pb-3">
               <Label>Service Type</Label>
               <SelectBox
