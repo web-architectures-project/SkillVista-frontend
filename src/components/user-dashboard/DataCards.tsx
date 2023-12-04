@@ -1,13 +1,6 @@
 import { MouseEventHandler } from 'react'
 import Image from 'next/image'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import PlaceholderImage from '../../../public/placeholder_services.png'
 import { TUserDashboardTable } from './columns'
 import { Button } from '../ui/button'
@@ -31,9 +24,9 @@ export default function DataCards({
 }: IProps) {
   const authState = useSelector(selectAuthState)
   return (
-    <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 gap-7">
+    <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-7">
       {data?.map((service: TUserDashboardTable, Index: number) => (
-        <Card key={Index} className="rounded-lg">
+        <Card key={Index} className="rounded-lg pb-5 ">
           <Image
             src={service?.service_image_url ? service?.service_image_url : PlaceholderImage}
             className="h-[50%] w-full rounded-t-lg"
@@ -41,9 +34,8 @@ export default function DataCards({
             width={600}
             height={600}
           />
-          <CardHeader>
-            <CardTitle>Service</CardTitle>
-            <CardDescription>Type of servide: {service?.short_description}</CardDescription>
+          <CardHeader className="2xl:pt-3">
+            <CardTitle className="">{service?.short_description}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul>
@@ -63,6 +55,7 @@ export default function DataCards({
                           clickChat()
                           handleClickInfoForChat(service)
                         }}
+                        className="pb-2"
                       >
                         Contact
                       </Button>
