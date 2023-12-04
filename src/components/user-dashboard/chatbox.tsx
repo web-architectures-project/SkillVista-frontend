@@ -7,6 +7,7 @@ import { Chat, selectChatListState, setChatListState } from '@/store/chatSlilce'
 import { selectUserId, selectUserType } from '@/store/userSlice'
 import { ChatUserList } from './chatUserList'
 import { TUserDashboardTable } from './columns'
+import { selectAuthState } from '@/store/authSlice'
 
 export interface ChatBoxProps {
   handleChatBox: () => void
@@ -16,6 +17,7 @@ export interface ChatBoxProps {
 const ChatBox = ({ handleChatBox, contactInfo }: ChatBoxProps) => {
   const chatlist = useSelector(selectChatListState)
   const userType = useSelector(selectUserType)
+  const authState = useSelector(selectAuthState)
 
   const userId = useSelector(selectUserId)
   const dispatch = useDispatch()
@@ -36,7 +38,7 @@ const ChatBox = ({ handleChatBox, contactInfo }: ChatBoxProps) => {
               Number(item.user_id) === userId
             : Number(item.provider_id) === userId,
         )
-
+        console.log(messages)
         dispatch(setChatListState(messages))
         if (userType === 'service_provider') {
           const reverseArray = res.message.reverse()
@@ -60,7 +62,6 @@ const ChatBox = ({ handleChatBox, contactInfo }: ChatBoxProps) => {
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value)
   }
-
   const handlePressSend = () => {
     const chatform = {
       user_id: userType === 'user' ? userId : userIdFromList,
@@ -143,23 +144,25 @@ const ChatBox = ({ handleChatBox, contactInfo }: ChatBoxProps) => {
                 })}
             </div>
           </div>
-          <div className="py-2 insent-x-0 bottom-0  lg:flex lg:justify-between items-stretch">
-            <input
-              type="text"
-              placeholder="Text Message"
-              value={message}
-              onChange={handleMessageChange}
-              className="px-3 py-3 w-full "
-            />
-            <Button
-              className="ml-2 bg-slate-300 rounded-md text-slate-500 self-center "
-              onClick={() => {
-                message && handlePressSend()
-              }}
-            >
-              Send
-            </Button>
-          </div>
+          {authState && (
+            <div className="py-2 insent-x-0 bottom-0  lg:flex lg:justify-between items-stretch">
+              <input
+                type="text"
+                placeholder="Text Message"
+                value={message}
+                onChange={handleMessageChange}
+                className="px-3 py-3 w-full "
+              />
+              <Button
+                className="ml-2 bg-slate-300 rounded-md text-slate-500 self-center "
+                onClick={() => {
+                  message && handlePressSend()
+                }}
+              >
+                Send
+              </Button>
+            </div>
+          )}
         </>
       )}
     </div>

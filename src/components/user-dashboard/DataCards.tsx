@@ -11,6 +11,8 @@ import {
 import PlaceholderImage from '../../../public/placeholder_services.png'
 import { TUserDashboardTable } from './columns'
 import { Button } from '../ui/button'
+import { useSelector } from 'react-redux'
+import { selectAuthState } from '@/store/authSlice'
 
 interface IProps {
   data: TUserDashboardTable[]
@@ -27,7 +29,7 @@ export default function DataCards({
   handleClickInfoForChat,
   handleDeleteService,
 }: IProps) {
-  console.log(userType)
+  const authState = useSelector(selectAuthState)
   return (
     <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 gap-7">
       {data?.map((service: TUserDashboardTable, Index: number) => (
@@ -50,11 +52,27 @@ export default function DataCards({
               <li>Pricing: {service?.pricing}</li>
             </ul>
           </CardContent>
-          <CardFooter>
-            <div>
-              {userType === 'service_provider' ? (
-                <>
-                  <div className="flex space-x-5">
+          {authState && (
+            <CardFooter>
+              <div>
+                {userType === 'service_provider' ? (
+                  <>
+                    <div className="flex space-x-5">
+                      <Button
+                        onClick={() => {
+                          clickChat()
+                          handleClickInfoForChat(service)
+                        }}
+                      >
+                        Contact
+                      </Button>
+                      <Button onClick={handleDeleteService(service?.service_id)}>
+                        Delete Service
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
                     <Button
                       onClick={() => {
                         clickChat()
@@ -63,25 +81,11 @@ export default function DataCards({
                     >
                       Contact
                     </Button>
-                    <Button onClick={handleDeleteService(service?.service_id)}>
-                      Delete Service
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => {
-                      clickChat()
-                      handleClickInfoForChat(service)
-                    }}
-                  >
-                    Contact
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardFooter>
+                  </>
+                )}
+              </div>
+            </CardFooter>
+          )}
         </Card>
       ))}
     </div>
