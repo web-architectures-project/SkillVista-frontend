@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import { selectAuthState } from '@/store/authSlice'
 import { FullScreenSearchBar } from '@/components/user-dashboard/FullScreenSearchBar'
 import { TUserDashboardTable } from '@/components/user-dashboard/columns'
-import { DummyData } from '@/lib/utils/UserDashboardData'
 import { apiRequest } from '@/components/apis/default'
 import { METHODS } from '@/lib/utils/ApiMethods'
 import DataCards from '@/components/user-dashboard/DataCards'
@@ -215,7 +214,7 @@ export default function Index({ consent }: IndexProps): JSX.Element {
             query={query}
             setQuery={setQuery}
             fetchDataOnEnter={fetchDataOnEnter}
-            toggle={DummyData ? true : false}
+            toggle={servicesToBeUsed ? true : false}
           />
           <DataCards data={servicesToBeUsed} />
         </div>
