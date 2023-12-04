@@ -114,8 +114,20 @@ export default function Index({ consent }: IndexProps): JSX.Element {
 
   const getServicesUsingSearch = async (searchQuery: string) => {
     try {
+      serviceDataFromSearch.length = 0
+      regularServiceData.length = 0
+      setServiceData([])
+      setServicesTobeUsed([])
+      setServiceDataFromSearchInput({
+        message: {
+          searchResult: [],
+        },
+        status: 0,
+      })
       const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
-      if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
+      if (serviceData?.status === 200 && serviceData.message) {
+        setServiceDataFromSearchInput(serviceData)
+      }
     } catch (err) {
       console.log(err)
     }
@@ -169,8 +181,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   }, [serviceData])
 
   useEffect(() => {
-    console.log('Working on update?!!')
-
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
     else setServicesTobeUsed(serviceDataFromSearch)
   }, [serviceDataFromSearch, regularServiceData, serviceDataFromSearchInput])
