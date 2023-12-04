@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { MouseEventHandler, useEffect, useMemo, useState } from 'react'
+import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
 import { useRouter } from 'next/router'
 import { getCookies, setCookie } from 'cookies-next'
@@ -48,7 +48,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   // Remove the below when unecessary -1Solon
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [query, setQuery] = useState('')
-  const [fetchedData, setFetchedData] = useState({})
   const [serviceData, setServiceData] = useState<ServiceAvailability[]>()
   const [servicesToBeUsed, setServicesTobeUsed] = useState<TUserDashboardTable[]>([])
   const [serviceDataFromSearchInput, setServiceDataFromSearchInput] = useState<
@@ -68,15 +67,20 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const authState = useSelector(selectAuthState)
+  console.log('Auth State>>>', authState)
 
-  const getServiceData = async () => {
+  const getServiceData = useCallback(async () => {
     try {
-      const serviceData = await apiRequest({ method: METHODS.GET, path: '/services' })
-      setServiceData(serviceData?.message)
+      if (authState === true) {
+        console.log('Went till here')
+
+        const serviceData = await apiRequest({ method: METHODS.GET, path: '/services' })
+        setServiceData(serviceData?.message)
+      }
     } catch (err) {
       console.log(err)
     }
-  }
+  }, [authState, setServiceData])
 
   const getProviderNameFromId = async (providerId: number) => {
     try {
@@ -112,7 +116,6 @@ export default function Index({ consent }: IndexProps): JSX.Element {
     try {
       const serviceData = await apiRequest({ method: METHODS.GET, path: `/search/${searchQuery}` })
       if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
-      if (serviceData && serviceData.message) setServiceDataFromSearchInput(serviceData)
     } catch (err) {
       console.log(err)
     }
@@ -120,24 +123,31 @@ export default function Index({ consent }: IndexProps): JSX.Element {
 
   useEffect(() => {
     if (!serviceData) getServiceData()
-  }, [serviceData])
+  }, [getServiceData, serviceData])
 
   useEffect(() => {
-    serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
-      getProviderNameFromId(service.provider_id)
-      console.log(serviceDataFromSearchInput)
-
-      serviceDataFromSearch?.push({
-        service_id: String(service.service_id),
-        provider_id: String(service?.provider_id),
-        short_description: service?.description,
-        provider: providerName,
-        availability: service?.availability,
-        pricing: String(service?.pricing),
-        service_image_url: '',
+    if (serviceDataFromSearchInput) {
+      serviceDataFromSearchInput?.message?.searchResult?.map((service: ServiceAvailability) => {
+        getProviderNameFromId(service.provider_id)
+        console.log(serviceDataFromSearchInput)
+        if (
+          !serviceDataFromSearch?.some(
+            innerService => innerService.service_id === String(service?.service_id),
+          )
+        ) {
+          serviceDataFromSearch?.push({
+            service_id: String(service.service_id),
+            provider_id: String(service?.provider_id),
+            short_description: service?.description,
+            provider: providerName,
+            availability: service?.availability,
+            pricing: String(service?.pricing),
+            service_image_url: service?.service_image_url,
+          })
+        }
+        console.log(serviceDataFromSearch)
       })
-      console.log(serviceDataFromSearch)
-    })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerName, serviceDataFromSearch, serviceDataFromSearchInput?.message?.searchResult])
 
@@ -151,13 +161,16 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         pricing: String(service.pricing),
         provider: providerName,
         short_description: service.description,
-        service_image_url: '',
+        service_image_url: service?.service_image_url,
       })
       console.log(regularServiceData)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceData])
 
   useEffect(() => {
+    console.log('Working on update?!!')
+
     if (serviceDataFromSearch.length === 0) setServicesTobeUsed(regularServiceData)
     else setServicesTobeUsed(serviceDataFromSearch)
   }, [serviceDataFromSearch, regularServiceData, serviceDataFromSearchInput])
@@ -186,17 +199,10 @@ export default function Index({ consent }: IndexProps): JSX.Element {
   const fetchDataOnEnter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     getServicesUsingSearch(query)
+    setQuery('')
   }
 
-  useEffect(() => {
-    if (query === '') setFetchedData('')
-  }, [fetchedData, query])
-
   // useEffect to check user authentication and redirect if not authenticated
-  useEffect(() => {
-    // if (!authState) router.push('user-login')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authState])
 
   const handleChatBox = () => {
     setShowChat(!showChat)
@@ -226,11 +232,11 @@ export default function Index({ consent }: IndexProps): JSX.Element {
         {showChat && <ChatBox handleChatBox={handleChatBox} contactInfo={contactInfo} />}
         <div>
           <FullScreenSearchBar
-            queryData={fetchedData}
+            queryData={servicesToBeUsed}
             query={query}
             setQuery={setQuery}
             fetchDataOnEnter={fetchDataOnEnter}
-            toggle={servicesToBeUsed ? true : false}
+            toggle={servicesToBeUsed?.length > 0 ? true : false}
           />
           <DataCards
             data={servicesToBeUsed}
