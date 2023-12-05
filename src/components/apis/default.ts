@@ -8,9 +8,11 @@ interface apiRequesProps {
   header?: object
 }
 
+const defaultApiUrl = 'http://localhost:3001'; 
+
 export const customAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-})
+  baseURL: process.env.NEXT_PUBLIC_API_URL || defaultApiUrl,
+});
 
 customAxios.interceptors.request.use(
   async config => {
