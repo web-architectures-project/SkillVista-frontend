@@ -2,3 +2,12 @@
 01:49:42 stream.go:37: Sent: {"jsonrpc":"2.0","result":{"capabilities":{"textDocumentSync":{"openClose":true,"change":1,"save":{}},"completionProvider":{"triggerCharacters":[" ",":","+","-","*","/","%","=","^","\u003e","\u003c"]},"signatureHelpProvider":{},"documentFormattingProvider":true,"documentOnTypeFormattingProvider":{"firstTriggerCharacter":""},"workspace":{"workspaceFolders":{}}}},"id":0}
 01:49:42 stream.go:85: Received: {"jsonrpc":"2.0","method":"initialized","params":{}}
 01:49:42 stream.go:85: Received: {"jsonrpc":"2.0","method":"workspace/didChangeConfiguration","params":{"settings":{"yolol":{"autoopen":{"enable":true},"formatting":{"mode":"Compact"},"lengthChecking":{"mode":"Strict"},"chipType":"Auto","debug":{"enable":true},"hotkeys":{"enable":true}},"nolol":{}}}}
+01:50:07 stream.go:85: Received: {"jsonrpc":"2.0","id":1,"method":"workspace/executeCommand","params":{"command":"activeDocument","arguments":["file:///c%3A/Users/Solon/Desktop/Projects/College/Masters1/SkillVista/SkillVista-frontend/.github/workflows/on-pr.yml"]}}
+01:50:07 stream.go:37: Sent: {"jsonrpc":"2.0","result":null,"id":1}
+01:50:09 stream.go:85: Received: {"jsonrpc":"2.0","id":2,"method":"workspace/executeCommand","params":{"command":"activeDocument","arguments":["file:///c%3A/Users/Solon/Desktop/Projects/College/Masters1/SkillVista/SkillVista-frontend/.github/workflows/on-push.yml"]}}
+01:50:09 stream.go:37: Sent: {"jsonrpc":"2.0","result":null,"id":2}
+01:50:11 stream.go:85: Received: {"jsonrpc":"2.0","id":3,"method":"workspace/executeCommand","params":{"command":"activeDocument","arguments":["file:///c%3A/Users/Solon/Desktop/Projects/College/Masters1/SkillVista/SkillVista-frontend/.github/workflows/on-pr.yml"]}}
+01:50:11 stream.go:37: Sent: {"jsonrpc":"2.0","result":null,"id":3}
+01:50:17 stream.go:85: Received: {"jsonrpc":"2.0","id":4,"method":"workspace/executeCommand","params":{"command":"activeDocument","arguments":["file:///c%3A/Users/Solon/Desktop/Projects/College/Masters1/SkillVista/SkillVista-frontend/.github/workflows/on-push.yml"]}}
+01:50:17 stream.go:37: Sent: {"jsonrpc":"2.0","result":null,"id":4}
+01:51:24 stream.go:85: Received: {"jsonrpc":"2.0","method":"$/setTraceNotification","params":{"value":"off"}}
